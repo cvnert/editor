@@ -1,0 +1,296 @@
+@import "./styles/_variables.css";
+@import "./styles/_keyframe-animations.css";
+
+@layer base {
+  .omnibox-editor-root,
+  .omnibox-editor-root * {
+    box-sizing: border-box;
+  }
+
+  .omnibox-editor-root {
+    --omnibox-editor-content-width: 708px;
+    background: var(--tt-bg-color);
+    color: var(--tt-theme-text, var(--tt-gray-light-900));
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .omnibox-editor-root button {
+    font: inherit;
+  }
+}
+
+.omnibox-editor-layout {
+  position: relative;
+  display: grid;
+  width: 100%;
+  grid-template-columns:
+    [full-start] minmax(96px, 1fr)
+    [content-start] minmax(0, var(--omnibox-editor-content-width))
+    [content-end] minmax(96px, 1fr)
+    [full-end];
+}
+
+.omnibox-editor-layout--embedded {
+  grid-template-columns:
+    [full-start] minmax(5.5rem, 5.5rem)
+    [content-start] minmax(0, 1fr)
+    [content-end full-end];
+}
+
+.omnibox-editor-root[data-variant="embedded"] {
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+}
+
+.omnibox-editor-wrapper--page {
+  min-height: 100vh;
+}
+
+.omnibox-editor-wrapper--embedded {
+  width: 100%;
+  min-height: 0;
+}
+
+.omnibox-editor-loading {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.omnibox-editor-loading__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.omnibox-editor-loading__spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: spin 1s linear infinite;
+}
+
+.omnibox-editor-loading__spinner-track {
+  opacity: 0.25;
+}
+
+.omnibox-editor-loading__spinner-path {
+  opacity: 0.75;
+}
+
+.omnibox-editor-loading__text {
+  text-align: center;
+}
+
+.omnibox-editor-content {
+  display: flex;
+  grid-column: content-start / content-end;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+}
+
+.omnibox-editor-content .tiptap.ProseMirror.omnibox-editor {
+  flex: 1;
+  padding-inline: 3rem;
+  padding-top: 3rem;
+  padding-bottom: 30vh;
+}
+
+.omnibox-editor-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  width: 100%;
+  height: 3rem;
+  align-items: center;
+  border-bottom: 1px solid var(--tt-border-color);
+  background: var(--tt-bg-color);
+  padding: 0.5rem 0.75rem;
+}
+
+.omnibox-editor-header__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tiptap-button-group {
+  display: flex;
+  width: fit-content;
+  align-items: stretch;
+}
+
+.tiptap-button-group:has([data-slot="tiptap-button-group"]) {
+  gap: 0.125rem;
+}
+
+.tiptap-button-group > *:focus-visible {
+  position: relative;
+  z-index: 10;
+}
+
+.tiptap-button-group > input {
+  flex: 1;
+}
+
+.tiptap-button-group > [data-slot="select-trigger"]:not([class*="w-"]) {
+  width: fit-content;
+}
+
+.tiptap-button-group-horizontal > [data-slot] {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tiptap-button-group-horizontal > [data-slot] ~ [data-slot] {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}
+
+.tiptap-button-group-horizontal
+  > [data-slot]:not(:has(~ [data-slot])) {
+  border-top-right-radius: var(--tt-radius-lg) !important;
+  border-bottom-right-radius: var(--tt-radius-lg) !important;
+}
+
+.tiptap-button-group-horizontal:has(select[aria-hidden="true"]:last-child)
+  > [data-slot="select-trigger"]:last-of-type {
+  border-top-right-radius: var(--tt-radius-lg);
+  border-bottom-right-radius: var(--tt-radius-lg);
+}
+
+.tiptap-button-group-vertical {
+  flex-direction: column;
+}
+
+.tiptap-button-group-vertical > [data-slot] {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tiptap-button-group-vertical > [data-slot] ~ [data-slot] {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top-width: 0;
+}
+
+.tiptap-button-group-vertical > [data-slot]:not(:has(~ [data-slot])) {
+  border-bottom-right-radius: var(--tt-radius-lg) !important;
+  border-bottom-left-radius: var(--tt-radius-lg) !important;
+}
+
+.tiptap-button-group-separator {
+  position: relative;
+  align-self: stretch;
+}
+
+.tiptap-button-group-separator[data-orientation="horizontal"] {
+  width: auto;
+  margin-inline: 1px;
+}
+
+.tiptap-button-group-separator[data-orientation="vertical"] {
+  height: auto;
+  margin-block: 1px;
+}
+
+.tiptap-separator {
+  --tt-link-border-color: var(--tt-gray-light-a-200);
+  flex-shrink: 0;
+  background: var(--tt-link-border-color);
+}
+
+.dark .tiptap-separator {
+  --tt-link-border-color: var(--tt-gray-dark-a-200);
+}
+
+.tiptap-separator[data-orientation="horizontal"] {
+  width: 100%;
+  height: 1px;
+  margin-block: 0.5rem;
+}
+
+.tiptap-separator[data-orientation="vertical"] {
+  width: 1px;
+  height: 1.5rem;
+}
+
+.omnibox-editor-root[data-variant="embedded"] .omnibox-editor-content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin-inline: 0;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.omnibox-editor-root[data-variant="embedded"] .tiptap.ProseMirror.omnibox-editor {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 320px;
+  padding: 16px;
+  word-break: normal;
+  overflow-wrap: break-word;
+  border: 1px solid var(--tt-gray-light-a-200);
+  border-radius: 6px;
+  outline: none;
+}
+
+.omnibox-editor-root[data-variant="embedded"] .tiptap.ProseMirror.omnibox-editor:focus {
+  border-color: var(--tt-brand-color-500);
+}
+
+.dark .omnibox-editor-root[data-variant="embedded"] .tiptap.ProseMirror.omnibox-editor,
+.omnibox-editor-root[data-variant="embedded"].dark .tiptap.ProseMirror.omnibox-editor {
+  border-color: var(--tt-gray-dark-a-200);
+}
+
+@media (max-width: 63.999rem) {
+  .omnibox-editor-layout {
+    grid-template-columns:
+      [full-start] minmax(1rem, 1fr)
+      [content-start] minmax(0, var(--omnibox-editor-content-width))
+      [content-end] minmax(1rem, 1fr)
+      [full-end];
+  }
+
+  .omnibox-editor-layout--embedded {
+    grid-template-columns:
+      [full-start] minmax(3.25rem, 3.25rem)
+      [content-start] minmax(0, 1fr)
+      [content-end full-end];
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .omnibox-editor-content {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .omnibox-editor-wrapper--page {
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+  }
+
+  .omnibox-editor-content .tiptap.ProseMirror.omnibox-editor {
+    padding-inline: 1.5rem;
+    padding-top: 1.5rem;
+  }
+}

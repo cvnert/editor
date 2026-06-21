@@ -1,0 +1,17 @@
+@layer components {
+.drag-handle {
+  transition-property: top;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+}
+.drag-handle::before {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: var(--drag-handle-main-axis-offset, 16px);
+  height: 100%;
+  pointer-events: auto;
+}
+
+}

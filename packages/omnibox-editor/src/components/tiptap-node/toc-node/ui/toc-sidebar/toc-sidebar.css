@@ -1,0 +1,243 @@
+@layer components {
+.toc-sidebar {
+  --tt-toc-sidebar-line-bg: var(--tt-gray-light-200);
+  --tt-toc-sidebar-line-bg-active: var(--tt-gray-light-900);
+  --tt-toc-sidebar-bg: var(--white);
+  --tt-toc-sidebar-border-color: var(--tt-gray-light-a-100);
+  --tt-toc-sidebar-text-color: var(--tt-gray-light-a-600);
+  --tt-toc-sidebar-text-hover-color: var(--tt-gray-light-a-800);
+  --tt-toc-sidebar-bg-hover-color: var(--tt-gray-light-a-100);
+  --tt-toc-sidebar-text-active-color: var(--tt-brand-color-500);
+  /* TOC spacing configuration */
+  --toc-indent: 0.75rem;
+  --toc-depth-factor: 1;
+  --toc-progress-indent: 0.25rem;
+  --toc-progress-width-base: 1rem;
+  --toc-progress-width-min: 0.25rem;
+}
+.dark .toc-sidebar {
+  --tt-toc-sidebar-line-bg: var(--tt-gray-dark-200);
+  --tt-toc-sidebar-line-bg-active: var(--tt-gray-dark-900);
+  --tt-toc-sidebar-bg: var(--tt-gray-dark-200);
+  --tt-toc-sidebar-border-color: var(--tt-gray-dark-a-100);
+  --tt-toc-sidebar-text-color: var(--tt-gray-dark-a-600);
+  --tt-toc-sidebar-text-hover-color: var(--tt-gray-dark-a-800);
+  --tt-toc-sidebar-bg-hover-color: var(--tt-gray-dark-a-100);
+  --tt-toc-sidebar-text-active-color: var(--tt-brand-color-400);
+}
+.toc-sidebar {
+  /* =========================
+     Sidebar layout & grid
+     ========================= */
+  width: 100%;
+  grid-row: 1/-1;
+  grid-column: content-end/full-end;
+  padding-inline-start: 0;
+  position: relative;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  /* Sticky wrapper */
+}
+.toc-sidebar-wrapper {
+  display: flex;
+  flex-direction: row;
+  position: sticky;
+  top: 130px;
+  margin-left: auto;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 200ms ease;
+}
+.toc-sidebar {
+  /* Inner layout */
+}
+.toc-sidebar-inner {
+  position: relative;
+  z-index: 10;
+  margin-right: 0.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 0.5rem;
+  padding-bottom: 0.75rem;
+}
+.toc-sidebar {
+  /* =========================
+     Progress bar column
+     ========================= */
+}
+.toc-sidebar-progress {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+}
+.toc-sidebar-progress-line {
+  height: 0.125rem;
+  border-radius: 0.25rem;
+  background-color: var(--tt-toc-sidebar-line-bg);
+  transition: background-color 0.3s ease;
+  margin-left: calc(var(--toc-progress-indent) * (var(--toc-depth, 1) - 1) * var(--toc-depth-factor));
+  width: max(var(--toc-progress-width-min), var(--toc-progress-width-base) - var(--toc-progress-indent) * (var(--toc-depth, 1) - 1));
+}
+.toc-sidebar-progress-line--active {
+  background-color: var(--tt-toc-sidebar-line-bg-active);
+}
+.toc-sidebar-progress-line[data-depth="1"] {
+  --toc-depth: 1;
+}
+.toc-sidebar-progress-line[data-depth="2"] {
+  --toc-depth: 2;
+}
+.toc-sidebar-progress-line[data-depth="3"] {
+  --toc-depth: 3;
+}
+.toc-sidebar-progress-line[data-depth="4"] {
+  --toc-depth: 4;
+}
+.toc-sidebar-progress-line[data-depth="5"] {
+  --toc-depth: 5;
+}
+.toc-sidebar-progress-line[data-depth="6"] {
+  --toc-depth: 6;
+}
+.toc-sidebar {
+  /* =========================
+     TOC nav trigger / popover
+     ========================= */
+}
+.toc-sidebar-nav {
+  position: absolute;
+  top: -0.625rem;
+  right: 0;
+  padding-inline: 0.625rem;
+  pointer-events: none;
+  transform: translateX(10px);
+  opacity: 0;
+  display: flex;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.toc-sidebar-nav--hidden {
+  display: none;
+}
+.toc-sidebar {
+  /* Popover container */
+}
+.toc-sidebar-popover {
+  --padding: 0.75rem;
+  --border-width: 1px;
+  background-color: var(--tt-toc-sidebar-bg);
+  border-radius: calc(var(--padding) + var(--tt-radius-md));
+  border: 1px solid var(--tt-toc-sidebar-border-color);
+  box-shadow: var(--tt-shadow-elevated-md);
+  margin-right: -0.625rem;
+  max-height: 24rem;
+  width: 100%;
+  overflow: auto;
+  padding: var(--padding);
+  scroll-margin: 0.25rem;
+  flex-grow: 1;
+}
+.toc-sidebar {
+  /* =========================
+     TOC links
+     ========================= */
+}
+.toc-sidebar-item {
+  display: flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding-block: 0.25rem;
+  padding-inline: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--tt-toc-sidebar-text-color);
+  text-decoration: none;
+  border-radius: var(--tt-radius-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-inline-start: calc(var(--toc-indent) * (var(--toc-depth, 1) - 1) * var(--toc-depth-factor));
+}
+.toc-sidebar-item:hover {
+  background-color: var(--tt-toc-sidebar-bg-hover-color);
+}
+.toc-sidebar-item:hover:not(.toc-sidebar-item--active) {
+  color: var(--tt-toc-sidebar-text-hover-color);
+}
+.toc-sidebar-item--active {
+  color: var(--tt-toc-sidebar-text-active-color);
+  font-weight: 500;
+}
+.toc-sidebar-item[data-depth="1"] {
+  --toc-depth: 1;
+}
+.toc-sidebar-item[data-depth="2"] {
+  --toc-depth: 2;
+}
+.toc-sidebar-item[data-depth="3"] {
+  --toc-depth: 3;
+}
+.toc-sidebar-item[data-depth="4"] {
+  --toc-depth: 4;
+}
+.toc-sidebar-item[data-depth="5"] {
+  --toc-depth: 5;
+}
+.toc-sidebar-item[data-depth="6"] {
+  --toc-depth: 6;
+}
+.toc-sidebar {
+  /* =========================
+     Context-specific variants
+     ========================= */
+}
+.toc-sidebar.toc-sidebar--dense {
+  --toc-depth-factor: 0.75;
+}
+.toc-sidebar.toc-sidebar--loose {
+  --toc-depth-factor: 1.25;
+}
+.toc-sidebar {
+  /* =========================
+     Interactions / media
+     ========================= */
+  /* Pointer-hover devices */
+}
+@media (hover: hover) {
+  .toc-sidebar-wrapper:hover .toc-sidebar-nav {
+    pointer-events: auto;
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.toc-sidebar {
+  /* Touch devices */
+}
+@media (hover: none) {
+  .toc-sidebar-nav {
+    pointer-events: auto;
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.toc-sidebar {
+  /* Mobile */
+}
+@media screen and (max-width: 768px) {
+  .toc-sidebar {
+    display: none;
+  }
+}
+
+}

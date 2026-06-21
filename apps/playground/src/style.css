@@ -1,0 +1,39 @@
+@import "tailwindcss/theme.css";
+@import "tailwindcss/utilities.css";
+@import "./styles/_variables.css";
+@import "./styles/_keyframe-animations.css";
+
+@layer base {
+  .omnibox-editor-root,
+  .omnibox-editor-root * {
+    box-sizing: border-box;
+  }
+
+  .omnibox-editor-root {
+    background: var(--tt-bg-color);
+    color: var(--tt-theme-text, var(--tt-gray-light-900));
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .omnibox-editor-root button {
+    font: inherit;
+  }
+}
+
+.omnibox-editor-layout {
+  grid-template-columns:
+    [full-start] minmax(96px, 1fr)
+    [content-start] minmax(0, 708px)
+    [content-end] minmax(96px, 1fr)
+    [full-end];
+}
+
+@media (max-width: 63.999rem) {
+  .omnibox-editor-layout {
+    grid-template-columns:
+      [full-start] minmax(1rem, 1fr)
+      [content-start] minmax(0, 708px)
+      [content-end] minmax(1rem, 1fr)
+      [full-end];
+  }
+}
