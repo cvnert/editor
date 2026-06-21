@@ -47,4 +47,69 @@
   color: inherit;
 }
 
+.code-block-node {
+  border: 1px solid var(--tt-codeblock-border);
+  border-radius: 6px/0.375rem;
+  background-color: var(--tt-codeblock-bg);
+  color: var(--tt-codeblock-text);
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  overflow: hidden;
+}
+
+.code-block-node__header {
+  align-items: center;
+  border-bottom: 1px solid var(--tt-codeblock-border);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.code-block-node__language {
+  color: var(--tt-gray-light-a-700);
+  font-family: "JetBrains Mono NL", monospace;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.dark .code-block-node__language {
+  color: var(--tt-gray-dark-a-700);
+}
+
+.code-block-node__toggle {
+  border: 0;
+  background: transparent;
+  color: var(--tt-gray-light-a-700);
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0;
+}
+
+.dark .code-block-node__toggle {
+  color: var(--tt-gray-dark-a-700);
+}
+
+.code-block-node__toggle:hover {
+  color: var(--tt-codeblock-text);
+  text-decoration: underline;
+}
+
+.tiptap.ProseMirror .code-block-node__pre {
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+}
+
+.code-block-node__content {
+  font-family: "JetBrains Mono NL", monospace;
+  white-space: pre-wrap;
+}
+
+.code-block-node[data-collapsed="true"] .code-block-node__pre {
+  display: none;
+}
+
 }

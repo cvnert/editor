@@ -32,6 +32,7 @@ import { Image } from "@/components/tiptap-node/image-node/image-node-extension"
 import { NodeBackground } from "@/components/tiptap-extension/node-background-extension"
 import { NodeAlignment } from "@/components/tiptap-extension/node-alignment-extension"
 import { TocNode } from "@/components/tiptap-node/toc-node/extensions/toc-node-extension"
+import { CodeBlock } from "@/components/tiptap-node/code-block-node/code-block-node-extension"
 
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
@@ -222,6 +223,7 @@ export function EditorProvider(props: EditorProviderProps) {
     },
     extensions: [
       StarterKit.configure({
+        codeBlock: false,
         horizontalRule: false,
         dropcursor: {
           width: 2,
@@ -229,6 +231,7 @@ export function EditorProvider(props: EditorProviderProps) {
         link: { openOnClick: false },
       }),
       HorizontalRule,
+      CodeBlock,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Placeholder.configure({
         placeholder,
