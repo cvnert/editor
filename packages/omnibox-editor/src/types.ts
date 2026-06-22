@@ -1,5 +1,9 @@
 import type { Content, JSONContent } from "@tiptap/core"
 import type { Editor } from "@tiptap/react"
+import type {
+  OmniboxEditorLocale,
+  OmniboxEditorTranslations,
+} from "@/lib/i18n"
 
 export type UploadFunction = (
   file: File,
@@ -11,14 +15,20 @@ export type OmniboxEditorUpdatePayload = {
   editor: Editor
   json: JSONContent
   html: string
+  markdown: string
 }
 
 export type OmniboxEditorVariant = "page" | "embedded"
+export type OmniboxEditorTheme = "light" | "dark"
 
 export interface OmniboxEditorProps {
   editable?: boolean
   placeholder?: string
-  content?: Content
+  content?: Content | string
+  linkBase?: string
+  locale?: OmniboxEditorLocale
+  translations?: OmniboxEditorTranslations
+  theme?: OmniboxEditorTheme
   contentWidth?: number | string
   variant?: OmniboxEditorVariant
   showHeader?: boolean

@@ -3,7 +3,12 @@ import type { Editor, NodeViewProps } from "@tiptap/react"
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react"
 import { NodeSelection } from "@tiptap/pm/state"
 
-import { isValidPosition } from "@/lib/tiptap-utils"
+import { cn, isValidPosition } from "@/lib/tiptap-utils"
+import { getEditorTranslations, type OmniboxEditorI18n } from "@/lib/i18n"
+import {
+  getNextImageRenderState,
+  type ImageRenderState,
+} from "./image-load-state"
 
 import "./image-node-view.css"
 
@@ -25,6 +30,7 @@ export interface ResizableImageProps extends React.HTMLAttributes<HTMLDivElement
   hasContent?: boolean
   onImageResize?: (width?: number) => void
   onUpdateAttributes?: (attrs: Record<string, unknown>) => void
+  i18n?: OmniboxEditorI18n
   getPos: () => number | undefined
   nodeSize?: number
 }
@@ -32,6 +38,9 @@ export interface ResizableImageProps extends React.HTMLAttributes<HTMLDivElement
 export function ImageNodeView(props: NodeViewProps) {
   const { editor, node, updateAttributes, getPos } = props
   const hasContent = node.content.size > 0
+  const i18n =
+    (props.extension.options as { i18n?: OmniboxEditorI18n }).i18n ??
+    getEditorTranslations()
 
   return (
     <ResizableImage
@@ -42,6 +51,7 @@ export function ImageNodeView(props: NodeViewProps) {
       initialWidth={node.attrs.width}
       showCaption={node.attrs.showCaption}
       hasContent={hasContent}
+      i18n={i18n}
       nodeSize={node.nodeSize}
       onImageResize={(width) => updateAttributes({ width })}
       onUpdateAttributes={updateAttributes}
@@ -63,11 +73,14 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   nodeSize,
   onImageResize,
   onUpdateAttributes,
+  i18n = getEditorTranslations(),
   getPos,
 }) => {
   const [resizeParams, setResizeParams] = useState<ResizeParams | undefined>()
   const [width, setWidth] = useState<number | undefined>(initialWidth)
   const [showHandles, setShowHandles] = useState(false)
+  const [imageRenderState, setImageRenderState] =
+    useState<ImageRenderState>("loading")
   const isResizingRef = useRef(false)
   const isMountedRef = useRef(true)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -264,6 +277,18 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
     if (editor?.isEditable && isMountedRef.current) setShowHandles(true)
   }
 
+  const imageLoadHandler = () => {
+    setImageRenderState((currentState) =>
+      getNextImageRenderState(currentState, "load")
+    )
+  }
+
+  const imageErrorHandler = () => {
+    setImageRenderState((currentState) =>
+      getNextImageRenderState(currentState, "error")
+    )
+  }
+
   useEffect(() => {
     window.addEventListener("mousemove", windowMouseMoveHandler)
     window.addEventListener("mouseup", windowMouseUpHandler)
@@ -287,7 +312,14 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
     }
   }, [])
 
+  useEffect(() => {
+    setImageRenderState((currentState) =>
+      getNextImageRenderState(currentState, "reset")
+    )
+  }, [src])
+
   const shouldShowCaption = showCaption || hasContent
+  const isImageLoading = imageRenderState === "loading"
 
   return (
     <NodeViewWrapper
@@ -303,14 +335,26 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
         className="tiptap-image-container"
         style={{ width: width ? `${width}px` : "fit-content" }}
       >
-        <div className="tiptap-image-content">
+        <div className="tiptap-image-content tw:min-h-8 tw:min-w-8 tw:justify-center">
+          {isImageLoading && (
+            <div
+              aria-hidden="true"
+              className="tw:absolute tw:inset-0 tw:flex tw:min-h-8 tw:min-w-8 tw:items-center tw:justify-center tw:rounded-[var(--tt-radius-xs)] tw:pointer-events-none"
+              contentEditable={false}
+            >
+              <span className="tw:size-4 tw:animate-[spin_1s_linear_infinite] tw:rounded-full tw:border-2 tw:border-[var(--tt-gray-light-a-200)] tw:border-t-[var(--tt-brand-color-500)] tw:dark:border-[var(--tt-gray-dark-a-200)] tw:dark:border-t-[var(--tt-brand-color-400)]" />
+            </div>
+          )}
+
           <img
             ref={imageRef}
             src={src}
             alt={alt}
-            className="tiptap-image-img"
+            className={cn("tiptap-image-img", isImageLoading && "tw:invisible")}
             contentEditable={false}
             draggable={false}
+            onLoad={imageLoadHandler}
+            onError={imageErrorHandler}
             onClick={handleImageClick}
             style={{ cursor: editor?.isEditable ? "pointer" : "default" }}
           />
@@ -337,7 +381,7 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
           <NodeViewContent
             as="div"
             className="tiptap-image-caption"
-            data-placeholder="Add a caption..."
+            data-placeholder={i18n.addCaption}
           />
         )}
       </div>

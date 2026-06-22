@@ -4,6 +4,14 @@ import { Image as TiptapImage } from "@tiptap/extension-image"
 import { ImageNodeView } from "@/components/tiptap-node/image-node/image-node-view"
 import type { Node } from "@tiptap/pm/model"
 import { NodeSelection, TextSelection } from "@tiptap/pm/state"
+import {
+  getEditorTranslations,
+  type OmniboxEditorI18n,
+} from "@/lib/i18n"
+
+interface OmniboxImageOptions extends ImageOptions {
+  i18n: OmniboxEditorI18n
+}
 
 interface ImageAttributes {
   src: string | null
@@ -35,8 +43,19 @@ function buildImageHTMLAttributes(
   return result
 }
 
-export const Image = TiptapImage.extend<ImageOptions>({
+export const Image = TiptapImage.extend<OmniboxImageOptions>({
   content: "inline*",
+
+  addOptions() {
+    return {
+      inline: false,
+      allowBase64: false,
+      HTMLAttributes: {},
+      resize: false,
+      ...this.parent?.(),
+      i18n: getEditorTranslations(),
+    }
+  },
 
   addAttributes() {
     return {

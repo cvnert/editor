@@ -108,6 +108,45 @@
   white-space: pre-wrap;
 }
 
+.code-block-node__diagram-body {
+  background: var(--tt-bg-color, #fff);
+  color: var(--tt-codeblock-text);
+  min-height: 14rem;
+  padding: 1rem;
+}
+
+.code-block-node__echarts {
+  height: 18rem;
+  min-height: 14rem;
+  width: 100%;
+}
+
+.code-block-node__mermaid {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 14rem;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.code-block-node__mermaid svg {
+  height: auto;
+  max-width: 100%;
+}
+
+.code-block-node__diagram-error {
+  color: var(--tt-red-light-700, #b42318);
+  font-family: "JetBrains Mono NL", monospace;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.dark .code-block-node__diagram-error {
+  color: var(--tt-red-dark-700, #f97066);
+}
+
 .code-block-node[data-collapsed="true"] .code-block-node__pre {
   display: none;
 }

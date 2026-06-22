@@ -7,7 +7,11 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, '../../packages/omnibox-editor/src'),
+      'cvnert-editor': path.resolve(
+        __dirname,
+        '../../packages/omnibox-editor/src/index.ts'
+      ),
     },
   },
   build: {

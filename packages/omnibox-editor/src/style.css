@@ -1,5 +1,13 @@
 @import "./styles/_variables.css";
 @import "./styles/_keyframe-animations.css";
+@theme prefix(tw) {
+  --spacing: 0.25rem;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+@tailwind utilities source(none);
+
+@source inline("tw:absolute tw:inset-0 tw:flex tw:min-h-8 tw:min-w-8 tw:items-center tw:justify-center tw:rounded-[var(--tt-radius-xs)] tw:pointer-events-none tw:size-4 tw:animate-[spin_1s_linear_infinite] tw:rounded-full tw:border-2 tw:border-[var(--tt-gray-light-a-200)] tw:border-t-[var(--tt-brand-color-500)] tw:dark:border-[var(--tt-gray-dark-a-200)] tw:dark:border-t-[var(--tt-brand-color-400)] tw:invisible");
 
 @layer base {
   .omnibox-editor-root,
@@ -12,6 +20,12 @@
     background: var(--tt-bg-color);
     color: var(--tt-theme-text, var(--tt-gray-light-900));
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .dark .omnibox-editor-root,
+  .omnibox-editor-root.dark,
+  .omnibox-editor-root[data-theme="dark"] {
+    color: var(--tt-theme-text, var(--tt-gray-dark-900));
   }
 
   .omnibox-editor-root button {
@@ -39,8 +53,14 @@
 
 .omnibox-editor-root[data-variant="embedded"] {
   background: transparent;
-  color: inherit;
+  color: var(--tt-theme-text, var(--tt-gray-light-900));
   font-family: inherit;
+}
+
+.dark .omnibox-editor-root[data-variant="embedded"],
+.omnibox-editor-root[data-variant="embedded"].dark,
+.omnibox-editor-root[data-variant="embedded"][data-theme="dark"] {
+  color: var(--tt-theme-text, var(--tt-gray-dark-900));
 }
 
 .omnibox-editor-wrapper--page {
@@ -100,8 +120,6 @@
 .omnibox-editor-content .tiptap.ProseMirror.omnibox-editor {
   flex: 1;
   padding-inline: 3rem;
-  padding-top: 3rem;
-  padding-bottom: 30vh;
 }
 
 .omnibox-editor-header {
@@ -246,6 +264,7 @@
   overflow-wrap: break-word;
   border: 1px solid var(--tt-gray-light-a-200);
   border-radius: 6px;
+  color: inherit;
   outline: none;
 }
 
@@ -291,6 +310,5 @@
 
   .omnibox-editor-content .tiptap.ProseMirror.omnibox-editor {
     padding-inline: 1.5rem;
-    padding-top: 1.5rem;
   }
 }
