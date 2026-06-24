@@ -11,6 +11,7 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { BlockquoteIcon } from "@/components/tiptap-icons/blockquote-icon"
 
 // --- UI Utils ---
+import { useEditorI18n } from "@/lib/i18n"
 import {
   findNodePosition,
   getSelectedBlockNodes,
@@ -231,6 +232,7 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canToggle = canToggleBlockquote(editor)
   const isActive = editor?.isActive("blockquote") || false
@@ -266,7 +268,7 @@ export function useBlockquote(config?: UseBlockquoteConfig) {
     isActive,
     handleToggle,
     canToggle,
-    label: "Blockquote",
+    label: i18n.blockquote,
     shortcutKeys: BLOCKQUOTE_SHORTCUT_KEY,
     Icon: BlockquoteIcon,
   }

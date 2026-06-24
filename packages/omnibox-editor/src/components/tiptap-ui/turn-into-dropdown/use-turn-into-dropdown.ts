@@ -5,6 +5,9 @@ import { NodeSelection } from "@tiptap/pm/state"
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
+// --- Lib ---
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
+
 // --- Icons ---
 import { ChevronDownIcon } from "@/components/tiptap-icons/chevron-down-icon"
 
@@ -102,6 +105,49 @@ export const blockTypeOptions = [
     isActive: (editor: Editor) => editor.isActive("codeBlock"),
   },
 ]
+
+type BlockTypeOption = (typeof blockTypeOptions)[number]
+
+function getHeadingLabel(level: Level, i18n: OmniboxEditorI18n) {
+  return (
+    {
+      1: i18n.heading1,
+      2: i18n.heading2,
+      3: i18n.heading3,
+      4: i18n.heading4,
+      5: i18n.heading5,
+      6: i18n.heading6,
+    } satisfies Record<Level, string>
+  )[level]
+}
+
+export function localizeBlockTypeOption(
+  option: BlockTypeOption,
+  i18n: OmniboxEditorI18n
+): BlockTypeOption {
+  const label = (() => {
+    switch (option.type) {
+      case "paragraph":
+        return i18n.text
+      case "heading":
+        return option.level ? getHeadingLabel(option.level, i18n) : i18n.heading
+      case "bulletList":
+        return i18n.bulletList
+      case "orderedList":
+        return i18n.orderedList
+      case "taskList":
+        return i18n.taskList
+      case "blockquote":
+        return i18n.blockquote
+      case "codeBlock":
+        return i18n.codeBlock
+      default:
+        return option.label
+    }
+  })()
+
+  return { ...option, label }
+}
 
 /**
  * Checks if turn into functionality can be used in the current editor state
@@ -225,11 +271,18 @@ export function useTurnIntoDropdown(config?: UseTurnIntoDropdownConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
 
   const canToggle = canTurnInto(editor, blockTypes)
-  const activeBlockType = getActiveBlockType(editor, blockTypes)
+  const activeBlockType = localizeBlockTypeOption(
+    getActiveBlockType(editor, blockTypes),
+    i18n
+  )
+  const filteredOptions = getFilteredBlockTypeOptions(blockTypes).map((option) =>
+    localizeBlockTypeOption(option, i18n)
+  )
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
@@ -268,8 +321,11 @@ export function useTurnIntoDropdown(config?: UseTurnIntoDropdownConfig) {
     setIsOpen,
     activeBlockType,
     handleOpenChange,
-    filteredOptions: getFilteredBlockTypeOptions(blockTypes),
-    label: `Turn into (current: ${activeBlockType?.label || "Text"})`,
+    filteredOptions,
+    label: i18n.turnIntoCurrent.replace(
+      "{{current}}",
+      activeBlockType?.label || i18n.text
+    ),
     Icon: ChevronDownIcon,
   }
 }

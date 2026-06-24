@@ -13,6 +13,7 @@ import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 import { TypeIcon } from "@/components/tiptap-icons/type-icon"
 
 // --- Lib ---
+import { useEditorI18n } from "@/lib/i18n"
 import {
   findNodePosition,
   getSelectedBlockNodes,
@@ -235,6 +236,7 @@ export function useText(config?: UseTextConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canToggle = canToggleText(editor)
@@ -284,7 +286,7 @@ export function useText(config?: UseTextConfig) {
     isActive,
     handleToggle,
     canToggle,
-    label: "Text",
+    label: i18n.text,
     shortcutKeys: TEXT_SHORTCUT_KEY,
     Icon: TypeIcon,
   }

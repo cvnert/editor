@@ -93,7 +93,7 @@ export const CopyToClipboardButton = forwardRef<
         role="button"
         tabIndex={-1}
         aria-label={label}
-        tooltip="Copy to clipboard"
+        tooltip={label}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}

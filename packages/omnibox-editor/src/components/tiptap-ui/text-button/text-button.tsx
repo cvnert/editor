@@ -94,7 +94,7 @@ export const TextButton = forwardRef<HTMLButtonElement, TextButtonProps>(
         data-disabled={!canToggle}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip="Text"
+        tooltip={label}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}

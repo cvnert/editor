@@ -73,6 +73,7 @@ import {
   getNodeDisplayName,
   isTextSelectionValid,
 } from "@/lib/tiptap-collab-utils"
+import { useEditorI18n } from "@/lib/i18n"
 import { SR_ONLY } from "@/lib/tiptap-utils"
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -177,6 +178,7 @@ const SubMenuTrigger: React.FC<{
 )
 
 const TransformActionGroup: React.FC = () => {
+  const i18n = useEditorI18n()
   const actions = useNodeTransformActions()
   const { canReset, handleResetFormatting, label, Icon } =
     useResetAllFormatting({
@@ -189,9 +191,9 @@ const TransformActionGroup: React.FC = () => {
   return (
     <>
       {actions && (
-        <SubMenuTrigger icon={Repeat2Icon} label="Turn Into">
+        <SubMenuTrigger icon={Repeat2Icon} label={i18n.turnInto}>
           <MenuGroup>
-            <MenuGroupLabel>Turn into</MenuGroupLabel>
+            <MenuGroupLabel>{i18n.turnInto}</MenuGroupLabel>
             {actions.map((action) => (
               <BaseMenuItem key={action.label} {...action} />
             ))}
@@ -212,6 +214,7 @@ const TransformActionGroup: React.FC = () => {
 }
 
 const TableFitToWidth: React.FC = () => {
+  const i18n = useEditorI18n()
   const { canFitToWidth, handleFitToWidth, label, Icon } = useTableFitToWidth({
     hideWhenUnavailable: true,
   })
@@ -231,7 +234,7 @@ const TableFitToWidth: React.FC = () => {
       {clearAllContents.canClearRowColumnContent && (
         <BaseMenuItem
           icon={clearAllContents.Icon}
-          label={"Clear all contents"}
+          label={i18n.clearAllContents}
           disabled={!clearAllContents.canClearRowColumnContent}
           onClick={clearAllContents.handleClear}
         />
@@ -350,6 +353,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
   ...props
 }) => {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const { isDragging } = useUiEditorState(editor)
   const isMobile = useIsBreakpoint("max", mobileBreakpoint)
   const [open, setOpen] = useState(false)
@@ -416,7 +420,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
 
   if (!editor) return null
 
-  const nodeName = getNodeDisplayName(editor)
+  const nodeName = getNodeDisplayName(editor, i18n)
 
   return (
     <div
@@ -464,8 +468,8 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
                     tabIndex={-1}
                     tooltip={
                       <>
-                        <div>Click for options</div>
-                        <div>Hold for drag</div>
+                        <div>{i18n.clickForOptions}</div>
+                        <div>{i18n.holdForDrag}</div>
                       </>
                     }
                     data-weight="small"

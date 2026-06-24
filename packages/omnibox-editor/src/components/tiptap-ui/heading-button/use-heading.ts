@@ -8,6 +8,7 @@ import { NodeSelection, TextSelection } from "@tiptap/pm/state"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Lib ---
+import { useEditorI18n } from "@/lib/i18n"
 import {
   findNodePosition,
   getSelectedBlockNodes,
@@ -66,6 +67,19 @@ export const HEADING_SHORTCUT_KEYS: Record<Level, string> = {
   4: "ctrl+alt+4",
   5: "ctrl+alt+5",
   6: "ctrl+alt+6",
+}
+
+function getHeadingLabel(level: Level, i18n: ReturnType<typeof useEditorI18n>) {
+  return (
+    {
+      1: i18n.heading1,
+      2: i18n.heading2,
+      3: i18n.heading3,
+      4: i18n.heading4,
+      5: i18n.heading5,
+      6: i18n.heading6,
+    } satisfies Record<Level, string>
+  )[level]
 }
 
 /**
@@ -306,6 +320,7 @@ export function useHeading(config: UseHeadingConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canToggleState = canToggle(editor, level)
   const isActive = isHeadingActive(editor, level)
@@ -341,7 +356,7 @@ export function useHeading(config: UseHeadingConfig) {
     isActive,
     handleToggle,
     canToggle: canToggleState,
-    label: `Heading ${level}`,
+    label: getHeadingLabel(level, i18n),
     shortcutKeys: HEADING_SHORTCUT_KEYS[level],
     Icon: headingIcons[level],
   }

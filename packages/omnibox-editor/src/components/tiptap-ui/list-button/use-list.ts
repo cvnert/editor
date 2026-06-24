@@ -13,6 +13,7 @@ import { ListOrderedIcon } from "@/components/tiptap-icons/list-ordered-icon"
 import { ListTodoIcon } from "@/components/tiptap-icons/list-todo-icon"
 
 // --- Lib ---
+import { useEditorI18n } from "@/lib/i18n"
 import {
   findNodePosition,
   getSelectedBlockNodes,
@@ -57,6 +58,14 @@ export const listLabels: Record<ListType, string> = {
   bulletList: "Bullet List",
   orderedList: "Ordered List",
   taskList: "Task List",
+}
+
+function getListLabels(i18n: ReturnType<typeof useEditorI18n>) {
+  return {
+    bulletList: i18n.bulletList,
+    orderedList: i18n.orderedList,
+    taskList: i18n.taskList,
+  } satisfies Record<ListType, string>
 }
 
 export const LIST_SHORTCUT_KEYS: Record<ListType, string> = {
@@ -311,6 +320,7 @@ export function useList(config: UseListConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canToggle = canToggleList(editor, type)
   const isActive = isListActive(editor, type)
@@ -346,7 +356,7 @@ export function useList(config: UseListConfig) {
     isActive,
     handleToggle,
     canToggle,
-    label: listLabels[type],
+    label: getListLabels(i18n)[type],
     shortcutKeys: LIST_SHORTCUT_KEYS[type],
     Icon: listIcons[type],
   }

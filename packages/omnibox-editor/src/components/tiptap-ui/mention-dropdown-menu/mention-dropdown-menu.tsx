@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef } from "react"
 import type { Editor, Range } from "@tiptap/react"
 
 // --- Lib ---
+import { getMentionUsers } from "@/lib/editor-users"
 import { getElementOverflowPosition } from "@/lib/tiptap-collab-utils"
+import type { User } from "@/contexts/user-context"
 
 // --- Tiptap UI ---
 import type {
@@ -25,14 +27,9 @@ import {
   CardItemGroup,
 } from "@/components/tiptap-ui-primitive/card"
 
-interface User {
-  id: number
-  name: string
-  position: string
-  avatarUrl: string
+type MentionDropdownMenuProps = Omit<SuggestionMenuProps, "items" | "children"> & {
+  users?: User[]
 }
-
-type MentionDropdownMenuProps = Omit<SuggestionMenuProps, "items" | "children">
 
 interface MentionItemProps {
   item: SuggestionItem<User>
@@ -40,54 +37,16 @@ interface MentionItemProps {
   onSelect: () => void
 }
 
-const fetchUsers = async (query: string): Promise<User[]> => {
-  const employeeData = [
-    ["Emily Johnson", "Marketing Manager"],
-    ["Michael Thompson", "Sales Manager"],
-    ["Sophia Lee", "Product Designer"],
-    ["William Davis", "IT Project Manager"],
-    ["Olivia Wilson", "HR Specialist"],
-    ["Daniel Taylor", "Financial Controller"],
-    ["Isabella Anderson", "Graphic Designer"],
-    ["Jacob Martinez", "Sales Representative"],
-    ["Ava Hernandez", "Marketing Assistant"],
-    ["Alexander Diaz", "IT Support"],
-    ["Emma Ramirez", "HR Specialist"],
-    ["Ethan Flores", "Product Manager"],
-    ["Mia Morales", "Graphic Designer"],
-    ["Noah Reyes", "Sales Manager"],
-    ["Isabella Castillo", "Marketing Manager"],
-    ["Liam Gutierrez", "IT Project Manager"],
-    ["Avery Jimenez", "HR Specialist"],
-    ["Lucas Vargas", "Product Designer"],
-    ["Chloe Rojas", "Graphic Designer"],
-    ["Kai Zhang", "Sales Representative"],
-  ] as const
+export const MentionDropdownMenu = ({
+  users = [],
+  ...props
+}: MentionDropdownMenuProps) => {
+  const usersRef = useRef(users)
 
-  const userData = {
-    users: employeeData.map(([name, position], index) => {
-      const id = index + 1
-      const avatarNumber = id < 10 ? `0${id}` : `${id}`
+  useEffect(() => {
+    usersRef.current = users
+  }, [users])
 
-      return {
-        id,
-        name,
-        position,
-        avatarUrl: `/avatars/memoji_${avatarNumber}.png`,
-      }
-    }),
-  }
-
-  if (!query) return userData.users
-
-  return userData.users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(query.toLowerCase()) ||
-      user.position.toLowerCase().includes(query.toLowerCase())
-  )
-}
-
-export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
   const handleItemSelect = (props: {
     editor: Editor
     range: Range
@@ -102,7 +61,7 @@ export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
         {
           type: "mention",
           attrs: {
-            id: props.context.id.toString(),
+            id: props.context.id,
             label: props.context.name,
           },
         },
@@ -115,9 +74,9 @@ export const MentionDropdownMenu = (props: MentionDropdownMenuProps) => {
   }
 
   const getSuggestionItems = async (props: { query: string }) => {
-    const users = await fetchUsers(props.query)
+    const mentionUsers = getMentionUsers(props.query, usersRef.current)
 
-    return users.map((user) => ({
+    return mentionUsers.map((user) => ({
       title: user.name,
       subtext: user.position,
       context: user,
@@ -164,8 +123,8 @@ const MentionItem = ({ item, isSelected, onSelect }: MentionItemProps) => {
       onClick={onSelect}
       data-user-id={item.context?.id}
     >
-      <Avatar>
-        <AvatarImage src={item.context?.avatarUrl} alt={item.title} />
+      <Avatar userColor={item.context?.color}>
+        <AvatarImage src={item.context?.avatar} alt={item.title} />
         <AvatarFallback>{item.title[0]?.toUpperCase()}</AvatarFallback>
       </Avatar>
 

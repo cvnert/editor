@@ -7,6 +7,8 @@ import type { Transaction } from "@tiptap/pm/state"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 
+import { useEditorI18n } from "@/lib/i18n"
+
 // --- Icons ---
 import { RotateCcwIcon } from "@/components/tiptap-icons/rotate-ccw-icon"
 
@@ -213,6 +215,7 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canReset = canResetFormatting(editor, preserveMarks)
@@ -262,7 +265,7 @@ export function useResetAllFormatting(config?: UseResetAllFormattingConfig) {
     isVisible,
     handleResetFormatting,
     canReset,
-    label: "Reset formatting",
+    label: i18n.resetFormatting,
     shortcutKeys: RESET_ALL_FORMATTING_SHORTCUT_KEY,
     Icon: RotateCcwIcon,
   }

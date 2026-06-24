@@ -76,6 +76,7 @@ import {
 import { MoveNodeButton } from "@/components/tiptap-ui/move-node-button"
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility"
 import { ImageNodeFloating } from "@/components/tiptap-node/image-node/image-node-floating"
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
 
 // =============================================================================
 // Types & Constants
@@ -145,11 +146,11 @@ function hasTextSelection(editor: Editor | null): boolean {
 // Toolbar View Registry
 // =============================================================================
 
-function createToolbarViewRegistry(): ToolbarViewRegistry {
+function createToolbarViewRegistry(i18n: OmniboxEditorI18n): ToolbarViewRegistry {
   return {
     [TOOLBAR_VIEWS.HIGHLIGHTER]: {
       id: TOOLBAR_VIEWS.HIGHLIGHTER,
-      title: "Text Highlighter",
+      title: i18n.textHighlighter,
       icon: <HighlighterIcon className="tiptap-button-icon" />,
       content: <ColorHighlightPopoverContent />,
       mobileButton: (onClick: () => void) => (
@@ -162,7 +163,7 @@ function createToolbarViewRegistry(): ToolbarViewRegistry {
     },
     [TOOLBAR_VIEWS.LINK]: {
       id: TOOLBAR_VIEWS.LINK,
-      title: "Link Editor",
+      title: i18n.linkEditor,
       icon: <LinkIcon className="tiptap-button-icon" />,
       content: <LinkContent />,
       mobileButton: (onClick: () => void) => <LinkButton onClick={onClick} />,
@@ -235,6 +236,7 @@ function FormattingGroup() {
 }
 
 function ColorActionGroup() {
+  const i18n = useEditorI18n()
   const { recentColors, isInitialized, addRecentColor } = useRecentColors()
 
   const renderRecentColors = () => {
@@ -243,7 +245,7 @@ function ColorActionGroup() {
     return (
       <>
         <DropdownMenuGroup>
-          <DropdownMenuLabel>Recent colors</DropdownMenuLabel>
+          <DropdownMenuLabel>{i18n.recentColors}</DropdownMenuLabel>
           {recentColors.map((colorObj) => (
             <DropdownMenuItem
               key={`${colorObj.type}-${colorObj.value}`}
@@ -291,7 +293,7 @@ function ColorActionGroup() {
       <DropdownMenuSubTrigger asChild>
         <Button variant="ghost">
           <PaintBucketIcon className="tiptap-button-icon" />
-          <span className="tiptap-button-text">Color</span>
+          <span className="tiptap-button-text">{i18n.color}</span>
           <Spacer />
           <ChevronRightIcon className="tiptap-button-icon" />
         </Button>
@@ -302,7 +304,7 @@ function ColorActionGroup() {
           {renderRecentColors()}
 
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Text color</DropdownMenuLabel>
+            <DropdownMenuLabel>{i18n.textColor}</DropdownMenuLabel>
 
             {TEXT_COLORS.map((textColor) => (
               <DropdownMenuItem key={textColor.value} asChild>
@@ -322,7 +324,7 @@ function ColorActionGroup() {
           <Separator orientation="horizontal" />
 
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Highlight color</DropdownMenuLabel>
+            <DropdownMenuLabel>{i18n.highlightColor}</DropdownMenuLabel>
 
             {HIGHLIGHT_COLORS.map((highlightColor) => (
               <DropdownMenuItem key={highlightColor.value} asChild>
@@ -348,12 +350,14 @@ function ColorActionGroup() {
 }
 
 function TransformActionGroup() {
+  const i18n = useEditorI18n()
+
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger asChild>
         <Button variant="ghost">
           <Repeat2Icon className="tiptap-button-icon" />
-          <span className="tiptap-button-text">Turn into</span>
+          <span className="tiptap-button-text">{i18n.turnInto}</span>
           <Spacer />
           <ChevronRightIcon className="tiptap-button-icon" />
         </Button>
@@ -377,17 +381,18 @@ interface DropdownMenuActionsProps {
 
 function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
   const isMobile = useIsBreakpoint()
+  const i18n = useEditorI18n()
 
   return (
     <>
       <DropdownMenuGroup>
-        <DropdownMenuLabel>{getNodeDisplayName(editor)}</DropdownMenuLabel>
+        <DropdownMenuLabel>{getNodeDisplayName(editor, i18n)}</DropdownMenuLabel>
 
         <ColorActionGroup />
         <TransformActionGroup />
 
         <DropdownMenuItem asChild>
-          <ResetAllFormattingButton text="Reset formatting" />
+          <ResetAllFormattingButton text={i18n.resetFormatting} />
         </DropdownMenuItem>
       </DropdownMenuGroup>
 
@@ -395,17 +400,17 @@ function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
 
       <DropdownMenuGroup>
         <DropdownMenuItem asChild>
-          <DuplicateButton text="Duplicate node" showShortcut={!isMobile} />
+          <DuplicateButton text={i18n.duplicateNode} showShortcut={!isMobile} />
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <CopyToClipboardButton
-            text="Copy to clipboard"
+            text={i18n.copyToClipboard}
             showShortcut={!isMobile}
           />
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <CopyAnchorLinkButton
-            text="Copy anchor link"
+            text={i18n.copyAnchorLink}
             showShortcut={!isMobile}
           />
         </DropdownMenuItem>
@@ -413,7 +418,7 @@ function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
 
       <DropdownMenuGroup>
         <DropdownMenuItem asChild>
-          <DeleteNodeButton text="Delete" showShortcut={!isMobile} />
+          <DeleteNodeButton text={i18n.delete} showShortcut={!isMobile} />
         </DropdownMenuItem>
       </DropdownMenuGroup>
     </>
@@ -525,6 +530,7 @@ function MainToolbarContent({
   toolbarViews,
   onViewChange,
 }: MainToolbarContentProps) {
+  const i18n = useEditorI18n()
   const hasSelection = hasTextSelection(editor)
   const hasContent = (editor?.getText().length ?? 0) > 0
 
@@ -557,7 +563,7 @@ function MainToolbarContent({
           <IndentGroup />
 
           <ToolbarGroup>
-            <ImageUploadButton text="Add" />
+            <ImageUploadButton text={i18n.add} />
             <ToolbarSeparator />
           </ToolbarGroup>
         </>
@@ -610,10 +616,11 @@ export interface MobileToolbarProps {
 
 export function MobileToolbar({ editor: providedEditor }: MobileToolbarProps) {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint("max", 480)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const toolbarState = useToolbarState(isMobile)
-  const toolbarViews = useMemo(() => createToolbarViewRegistry(), [])
+  const toolbarViews = useMemo(() => createToolbarViewRegistry(i18n), [i18n])
 
   const currentView = toolbarState.isMainView
     ? null

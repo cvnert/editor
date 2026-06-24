@@ -7,6 +7,8 @@ import { NodeSelection } from "@tiptap/pm/state"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 
+import { useEditorI18n } from "@/lib/i18n"
+
 // --- Icons ---
 import { TrashIcon } from "@/components/tiptap-icons/trash-icon"
 
@@ -186,6 +188,7 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canDeleteNodeState = canDeleteNode(editor)
@@ -233,7 +236,7 @@ export function useDeleteNode(config?: UseDeleteNodeConfig) {
     isVisible,
     handleDeleteNode,
     canDeleteNode: canDeleteNodeState,
-    label: "Delete",
+    label: i18n.delete,
     shortcutKeys: DELETE_NODE_SHORTCUT_KEY,
     Icon: TrashIcon,
   }

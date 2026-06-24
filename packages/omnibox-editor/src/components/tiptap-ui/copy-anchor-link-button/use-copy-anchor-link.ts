@@ -7,6 +7,8 @@ import type { Node } from "@tiptap/pm/model"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 
+import { useEditorI18n } from "@/lib/i18n"
+
 // --- Utils ---
 import {
   getAnchorNodeAndPos,
@@ -205,6 +207,7 @@ export function useCopyAnchorLink(config?: UseCopyAnchorLinkConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canCopyAnchor = canCopyAnchorLink(editor)
@@ -256,7 +259,7 @@ export function useCopyAnchorLink(config?: UseCopyAnchorLinkConfig) {
     isVisible,
     handleCopyAnchorLink,
     canCopyAnchorLink: canCopyAnchor,
-    label: "Copy anchor link",
+    label: i18n.copyAnchorLink,
     shortcutKeys: COPY_ANCHOR_LINK_SHORTCUT_KEY,
     Icon: LinkIcon,
   }

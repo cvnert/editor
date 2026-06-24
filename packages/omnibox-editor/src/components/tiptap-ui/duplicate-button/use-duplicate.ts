@@ -7,6 +7,8 @@ import { NodeSelection } from "@tiptap/pm/state"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 
+import { useEditorI18n } from "@/lib/i18n"
+
 // --- Icons ---
 import { CopyIcon } from "@/components/tiptap-icons/copy-icon"
 
@@ -175,6 +177,7 @@ export function useDuplicate(config?: UseDuplicateConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canDuplicate = canDuplicateNode(editor)
@@ -222,7 +225,7 @@ export function useDuplicate(config?: UseDuplicateConfig) {
     isVisible,
     handleDuplicate,
     canDuplicate,
-    label: "Duplicate node",
+    label: i18n.duplicateNode,
     shortcutKeys: DUPLICATE_SHORTCUT_KEY,
     Icon: CopyIcon,
   }

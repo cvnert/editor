@@ -1,137 +1,96 @@
-import { getAvatar } from "@/lib/tiptap-collab-utils"
-import { createContext, useContext, useEffect, useState } from "react"
+import {
+  dedupeEditorUsers,
+  getOrCreateEditorUser,
+  toEditorUser,
+  toEditorUsers,
+  type EditorUser,
+} from "@/lib/editor-users"
+import type {
+  OmniboxEditorCollaborationUser,
+  OmniboxEditorMentionUser,
+} from "@/types"
+import { createContext, useCallback, useContext, useMemo, useState } from "react"
 
-export type User = {
-  id: string
-  name: string
-  color: string
-  avatar: string
-}
+export type User = EditorUser
 
 export type UserContextValue = {
   user: User
+  mentionUsers: User[]
+  onlineUsers: User[]
+  setOnlineUsers: (users: User[]) => void
 }
 
 export const UserContext = createContext<UserContextValue>({
   user: { color: "", id: "", name: "", avatar: "" },
+  mentionUsers: [],
+  onlineUsers: [],
+  setOnlineUsers: () => {},
 })
 
-export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [user] = useState<User>({
-    color: getColorFromLocalStorage(),
-    name: getUsernameFromLocalStorage(),
-    id: getUserIdFromLocalStorage(),
-    avatar: getAvatar(getUsernameFromLocalStorage()),
+function areSameUsers(previousUsers: User[], nextUsers: User[]) {
+  if (previousUsers.length !== nextUsers.length) {
+    return false
+  }
+
+  return previousUsers.every((previousUser, index) => {
+    const nextUser = nextUsers[index]
+
+    return (
+      nextUser &&
+      previousUser.id === nextUser.id &&
+      previousUser.name === nextUser.name &&
+      previousUser.color === nextUser.color &&
+      previousUser.avatar === nextUser.avatar &&
+      previousUser.position === nextUser.position
+    )
   })
+}
 
-  useEffect(() => {
-    window.localStorage.setItem("_tiptap_username", user.name)
-    window.localStorage.setItem("_tiptap_color", user.color)
-    window.localStorage.setItem("_tiptap_user_id", user.id)
-  }, [user])
-
-  return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+export function UserProvider({
+  children,
+  mentionUsers,
+  user: providedUser,
+}: {
+  children: React.ReactNode
+  mentionUsers?: OmniboxEditorMentionUser[]
+  user?: OmniboxEditorCollaborationUser
+}) {
+  const [generatedUser] = useState<User>(() => getOrCreateEditorUser())
+  const [onlineUsers, setOnlineUsersState] = useState<User[]>([])
+  const user = useMemo(
+    () => toEditorUser(providedUser) ?? generatedUser,
+    [generatedUser, providedUser]
   )
+  const configuredMentionUsers = useMemo(
+    () => toEditorUsers(mentionUsers),
+    [mentionUsers]
+  )
+  const setOnlineUsers = useCallback((users: User[]) => {
+    const uniqueUsers = dedupeEditorUsers(users)
+
+    setOnlineUsersState((previousUsers) => {
+      if (areSameUsers(previousUsers, uniqueUsers)) {
+        return previousUsers
+      }
+
+      return uniqueUsers
+    })
+  }, [])
+  const value = useMemo(
+    () => ({
+      user,
+      onlineUsers,
+      setOnlineUsers,
+      mentionUsers: dedupeEditorUsers([
+        user,
+        ...onlineUsers,
+        ...configuredMentionUsers,
+      ]),
+    }),
+    [configuredMentionUsers, onlineUsers, setOnlineUsers, user]
+  )
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }
 
 export const useUser = () => useContext(UserContext)
-
-export const FIRST_NAMES = [
-  "John",
-  "Jane",
-  "Alice",
-  "Bob",
-  "Eve",
-  "Charlie",
-  "David",
-  "Frank",
-  "Grace",
-  "Helen",
-  "Rob Lowe",
-  "Rob",
-]
-
-export const LAST_NAMES = [
-  "Smith",
-  "Johnson",
-  "Williams",
-  "Jones",
-  "Brown",
-  "Davis",
-  "Miller",
-  "Wilson",
-  "Moore",
-  "Taylor",
-  "Anderson",
-  "Thomas",
-  "Lowe",
-]
-
-export const USER_COLORS = [
-  "#fb7185",
-  "#fdba74",
-  "#d9f99d",
-  "#a7f3d0",
-  "#a5f3fc",
-  "#a5b4fc",
-  "#f0abfc",
-  "#fda58d",
-  "#f2cc8f",
-  "#9ae6b4",
-]
-
-const uuid = (): string => {
-  const template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-  return template.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    const v = c === "x" ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
-}
-
-const getRandomArrayItem = (array: string[]) => {
-  if (array.length === 0) {
-    throw new Error("Cannot get random item from empty array")
-  }
-  return array[Math.floor(Math.random() * array.length)]!
-}
-
-const generateRandomUsername = (): string => {
-  const names = [getRandomArrayItem(FIRST_NAMES)]
-
-  if (Math.random() > 0.85) {
-    names.push(getRandomArrayItem(FIRST_NAMES))
-  }
-  names.push(getRandomArrayItem(LAST_NAMES))
-
-  return names.join(" ")
-}
-
-const generateRandomColor = (): string => {
-  return getRandomArrayItem(USER_COLORS) ?? "#9ae6b4"
-}
-
-const getFromLocalStorage = (
-  key: string,
-  fallback: () => string,
-  isServer: boolean = typeof window === "undefined"
-): string => {
-  if (isServer) {
-    return fallback()
-  }
-  const value = window.localStorage.getItem(key)
-  return value !== null ? value : fallback()
-}
-
-const getUsernameFromLocalStorage = (): string => {
-  return getFromLocalStorage("_tiptap_username", generateRandomUsername)
-}
-
-const getColorFromLocalStorage = (): string => {
-  return getFromLocalStorage("_tiptap_color", generateRandomColor)
-}
-
-const getUserIdFromLocalStorage = (): string => {
-  return getFromLocalStorage("_tiptap_user_id", () => uuid())
-}

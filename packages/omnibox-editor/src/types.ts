@@ -1,5 +1,6 @@
 import type { Content, JSONContent } from "@tiptap/core"
 import type { Editor } from "@tiptap/react"
+import type { Doc } from "yjs"
 import type {
   OmniboxEditorLocale,
   OmniboxEditorTranslations,
@@ -20,8 +21,54 @@ export type OmniboxEditorUpdatePayload = {
 
 export type OmniboxEditorVariant = "page" | "embedded"
 export type OmniboxEditorTheme = "light" | "dark"
+export type OmniboxEditorAiAction = "ask" | "continue_writing"
+export type OmniboxEditorAiContent = JSONContent | JSONContent[]
+export type OmniboxEditorCollaborationUser = {
+  id?: string
+  name: string
+  color: string
+  avatar?: string
+}
+export type OmniboxEditorMentionUser = {
+  id: string
+  name: string
+  color?: string
+  avatar?: string
+  position?: string
+}
+export type OmniboxEditorCollaborationProvider = {
+  awareness?: unknown
+  document?: unknown
+}
+export type OmniboxEditorCollaborationConfig =
+  | false
+  | {
+      document: Doc
+      provider?: OmniboxEditorCollaborationProvider
+      user?: OmniboxEditorCollaborationUser
+    }
+export type OmniboxEditorAiSubmitPayload = {
+  action: OmniboxEditorAiAction
+  editor: Editor
+  prompt: string
+  signal?: AbortSignal
+  onChunk?: (chunk: string) => void
+  onContent?: (content: OmniboxEditorAiContent) => void
+  onContentPreview?: (content: OmniboxEditorAiContent) => void
+}
+
+export type OmniboxEditorAiConfig = {
+  enabled?: boolean
+  onSubmit?: (payload: OmniboxEditorAiSubmitPayload) => void | Promise<void>
+}
+
+export type OmniboxEditorAiFeature = boolean | OmniboxEditorAiConfig
 
 export interface OmniboxEditorProps {
+  ai?: OmniboxEditorAiFeature
+  collaboration?: OmniboxEditorCollaborationConfig
+  user?: OmniboxEditorCollaborationUser
+  mentionUsers?: OmniboxEditorMentionUser[]
   editable?: boolean
   placeholder?: string
   content?: Content | string

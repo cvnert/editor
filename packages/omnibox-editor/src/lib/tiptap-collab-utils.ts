@@ -3,14 +3,18 @@ import { CellSelection } from "@tiptap/pm/tables"
 import type { JSONContent, Editor } from "@tiptap/react"
 import { isTextSelection, isNodeSelection, posToDOMRect } from "@tiptap/react"
 
-const NODE_TYPE_LABELS: Record<string, string> = {
-  paragraph: "Text",
-  heading: "Heading",
-  blockquote: "Blockquote",
-  listItem: "List Item",
-  codeBlock: "Code Block",
-  table: "Table",
-  tocNode: "Table of contents",
+import { getEditorTranslations, type OmniboxEditorI18n } from "@/lib/i18n"
+
+function getNodeTypeLabels(i18n: OmniboxEditorI18n): Record<string, string> {
+  return {
+    paragraph: i18n.text,
+    heading: i18n.heading,
+    blockquote: i18n.blockquote,
+    listItem: i18n.listItem,
+    codeBlock: i18n.codeBlock,
+    table: i18n.table,
+    tocNode: i18n.tableOfContents,
+  }
 }
 export type OverflowPosition = "none" | "top" | "bottom" | "both"
 
@@ -19,23 +23,28 @@ export type OverflowPosition = "none" | "top" | "bottom" | "both"
  * @param editor The Tiptap editor instance
  * @returns The display name of the current node
  */
-export const getNodeDisplayName = (editor: Editor | null): string => {
-  if (!editor) return "Node"
+export const getNodeDisplayName = (
+  editor: Editor | null,
+  i18n: OmniboxEditorI18n = getEditorTranslations()
+): string => {
+  if (!editor) return i18n.node
+
+  const nodeTypeLabels = getNodeTypeLabels(i18n)
 
   const { selection } = editor.state
 
   if (selection instanceof NodeSelection) {
     const nodeType = selection.node.type.name
-    return NODE_TYPE_LABELS[nodeType] || nodeType.toLowerCase()
+    return nodeTypeLabels[nodeType] || nodeType.toLowerCase()
   }
 
   if (selection instanceof CellSelection) {
-    return "Table"
+    return i18n.table
   }
 
   const { $anchor } = selection
   const nodeType = $anchor.parent.type.name
-  return NODE_TYPE_LABELS[nodeType] || nodeType.toLowerCase()
+  return nodeTypeLabels[nodeType] || nodeType.toLowerCase()
 }
 
 /**

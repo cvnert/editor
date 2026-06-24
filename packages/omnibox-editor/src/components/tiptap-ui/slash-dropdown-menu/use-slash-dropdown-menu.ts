@@ -17,8 +17,10 @@ import { AtSignIcon } from "@/components/tiptap-icons/at-sign-icon"
 import { SmilePlusIcon } from "@/components/tiptap-icons/smile-plus-icon"
 import { TableIcon } from "@/components/tiptap-icons/table-icon"
 import { ListIndentedIcon } from "@/components/tiptap-icons/list-indented-icon"
+import { AiSparklesIcon } from "@/components/tiptap-icons/ai-sparkles-icon"
 
 // --- Lib ---
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
 import { isExtensionAvailable, isNodeInSchema } from "@/lib/tiptap-utils"
 
 // --- Tiptap UI ---
@@ -27,6 +29,8 @@ import { addEmojiTrigger } from "@/components/tiptap-ui/emoji-trigger-button"
 import { addMentionTrigger } from "@/components/tiptap-ui/mention-trigger-button"
 
 export interface SlashMenuConfig {
+  aiEnabled?: boolean
+  onAiAction?: (action: SlashMenuAiAction) => void
   enabledItems?: SlashMenuItemType[]
   customItems?: SuggestionItem[]
   itemGroups?: {
@@ -35,113 +39,130 @@ export interface SlashMenuConfig {
   showGroups?: boolean
 }
 
-const texts = {
+function getSlashMenuTexts(i18n: OmniboxEditorI18n) {
+  return {
+  // AI
+  ai_continue_writing: {
+    title: i18n.continueWriting,
+    subtext: i18n.continueWritingSubtext,
+    keywords: ["ai", "continue", "writing", "autocomplete", "complete"],
+    badge: AiSparklesIcon,
+    group: i18n.ai,
+  },
+  ai_ask: {
+    title: i18n.askAi,
+    subtext: i18n.askAiSubtext,
+    keywords: ["ai", "ask", "assistant", "generate", "write"],
+    badge: AiSparklesIcon,
+    group: i18n.ai,
+  },
+
   // Style
   text: {
-    title: "Text",
-    subtext: "Regular text paragraph",
+    title: i18n.text,
+    subtext: i18n.regularTextParagraph,
     keywords: ["p", "paragraph", "text"],
     badge: TypeIcon,
-    group: "Style",
+    group: i18n.style,
   },
   heading_1: {
-    title: "Heading 1",
-    subtext: "Top-level heading",
+    title: i18n.heading1,
+    subtext: i18n.topLevelHeading,
     keywords: ["h", "heading1", "h1"],
     badge: HeadingOneIcon,
-    group: "Style",
+    group: i18n.style,
   },
   heading_2: {
-    title: "Heading 2",
-    subtext: "Key section heading",
+    title: i18n.heading2,
+    subtext: i18n.heading2,
     keywords: ["h2", "heading2", "subheading"],
     badge: HeadingTwoIcon,
-    group: "Style",
+    group: i18n.style,
   },
   heading_3: {
-    title: "Heading 3",
-    subtext: "Subsection and group heading",
+    title: i18n.heading3,
+    subtext: i18n.subsectionAndGroupHeading,
     keywords: ["h3", "heading3", "subheading"],
     badge: HeadingThreeIcon,
-    group: "Style",
+    group: i18n.style,
   },
   bullet_list: {
-    title: "Bullet List",
-    subtext: "List with unordered items",
+    title: i18n.bulletList,
+    subtext: i18n.listWithUnorderedItems,
     keywords: ["ul", "li", "list", "bulletlist", "bullet list"],
     badge: ListIcon,
-    group: "Style",
+    group: i18n.style,
   },
   ordered_list: {
-    title: "Numbered List",
-    subtext: "List with ordered items",
+    title: i18n.orderedList,
+    subtext: i18n.listWithOrderedItems,
     keywords: ["ol", "li", "list", "numberedlist", "numbered list"],
     badge: ListOrderedIcon,
-    group: "Style",
+    group: i18n.style,
   },
   task_list: {
-    title: "To-do list",
-    subtext: "List with tasks",
+    title: i18n.taskList,
+    subtext: i18n.listWithTasks,
     keywords: ["tasklist", "task list", "todo", "checklist"],
     badge: ListTodoIcon,
-    group: "Style",
+    group: i18n.style,
   },
   quote: {
-    title: "Blockquote",
-    subtext: "Blockquote block",
+    title: i18n.blockquote,
+    subtext: i18n.blockquoteBlock,
     keywords: ["quote", "blockquote"],
     badge: BlockquoteIcon,
-    group: "Style",
+    group: i18n.style,
   },
   code_block: {
-    title: "Code Block",
-    subtext: "Code block with syntax highlighting",
+    title: i18n.codeBlock,
+    subtext: i18n.codeBlockWithSyntaxHighlighting,
     keywords: ["code", "pre"],
     badge: CodeBlockIcon,
-    group: "Style",
+    group: i18n.style,
   },
 
   // Insert
   mention: {
-    title: "Mention",
-    subtext: "Mention a user or item",
+    title: i18n.mention,
+    subtext: i18n.mentionSubtext,
     keywords: ["mention", "user", "item", "tag"],
     badge: AtSignIcon,
-    group: "Insert",
+    group: i18n.insert,
   },
   emoji: {
-    title: "Emoji",
-    subtext: "Insert an emoji",
+    title: i18n.emoji,
+    subtext: i18n.emojiSubtext,
     keywords: ["emoji", "emoticon", "smiley"],
     badge: SmilePlusIcon,
-    group: "Insert",
+    group: i18n.insert,
   },
   table: {
-    title: "Table",
-    subtext: "Insert a table",
+    title: i18n.table,
+    subtext: i18n.tableSubtext,
     keywords: ["table", "insertTable"],
     badge: TableIcon,
-    group: "Insert",
+    group: i18n.insert,
   },
   divider: {
-    title: "Separator",
-    subtext: "Horizontal line to separate content",
+    title: i18n.separator,
+    subtext: i18n.separatorSubtext,
     keywords: ["hr", "horizontalRule", "line", "separator"],
     badge: MinusIcon,
-    group: "Insert",
+    group: i18n.insert,
   },
   toc: {
-    title: "Table of contents",
-    subtext: "Insert a table of contents",
+    title: i18n.tableOfContents,
+    subtext: i18n.tableOfContentsSubtext,
     keywords: ["toc", "tableofcontents", "table of contents"],
     badge: ListIndentedIcon,
-    group: "Insert",
+    group: i18n.insert,
   },
 
   // Upload
   image: {
-    title: "Image",
-    subtext: "Resizable image with caption",
+    title: i18n.image,
+    subtext: i18n.imageSubtext,
     keywords: [
       "image",
       "imageUpload",
@@ -152,14 +173,52 @@ const texts = {
       "url",
     ],
     badge: ImageIcon,
-    group: "Upload",
+    group: i18n.upload,
   },
 }
+}
 
-export type SlashMenuItemType = keyof typeof texts
+export type SlashMenuItemType = keyof ReturnType<typeof getSlashMenuTexts>
+export type SlashMenuAiAction = "ask" | "continue_writing"
 
-const getItemImplementations = () => {
+export function getSlashMenuItemAction(
+  itemType: SlashMenuItemType
+): SlashMenuAiAction | null {
+  if (itemType === "ai_continue_writing") return "continue_writing"
+  if (itemType === "ai_ask") return "ask"
+
+  return null
+}
+
+export function getSlashMenuItemTypes(
+  itemTypes: SlashMenuItemType[],
+  config?: Pick<SlashMenuConfig, "aiEnabled">
+) {
+  if (config?.aiEnabled) {
+    return itemTypes
+  }
+
+  return itemTypes.filter((itemType) => !itemType.startsWith("ai_"))
+}
+
+const getItemImplementations = (config?: SlashMenuConfig) => {
   return {
+    // AI
+    ai_continue_writing: {
+      check: (editor: Editor) => editor.isEditable,
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().run()
+        config?.onAiAction?.("continue_writing")
+      },
+    },
+    ai_ask: {
+      check: (editor: Editor) => editor.isEditable,
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().run()
+        config?.onAiAction?.("ask")
+      },
+    },
+
     // Style
     text: {
       check: (editor: Editor) => isNodeInSchema("paragraph", editor),
@@ -302,15 +361,20 @@ function organizeItemsByGroups(
  * Custom hook for slash dropdown menu functionality
  */
 export function useSlashDropdownMenu(config?: SlashMenuConfig) {
+  const i18n = useEditorI18n()
+
   const getSlashMenuItems = useCallback(
     (editor: Editor) => {
       const items: SuggestionItem[] = []
+      const texts = getSlashMenuTexts(i18n)
 
-      const enabledItems =
-        config?.enabledItems || (Object.keys(texts) as SlashMenuItemType[])
+      const enabledItems = getSlashMenuItemTypes(
+        config?.enabledItems || (Object.keys(texts) as SlashMenuItemType[]),
+        config
+      )
       const showGroups = config?.showGroups !== false
 
-      const itemImplementations = getItemImplementations()
+      const itemImplementations = getItemImplementations(config)
 
       enabledItems.forEach((itemType) => {
         const itemImpl = itemImplementations[itemType]
@@ -339,7 +403,7 @@ export function useSlashDropdownMenu(config?: SlashMenuConfig) {
       // Reorganize items by groups to ensure keyboard navigation works correctly
       return organizeItemsByGroups(items, showGroups)
     },
-    [config]
+    [config, i18n]
   )
 
   return {

@@ -9,6 +9,8 @@ import { Fragment, Slice } from "@tiptap/pm/model"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 
+import { useEditorI18n } from "@/lib/i18n"
+
 // --- Icons ---
 import { ClipboardIcon } from "@/components/tiptap-icons/clipboard-icon"
 
@@ -209,6 +211,7 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canCopyToClipboardState = canCopyToClipboard(editor)
@@ -258,7 +261,7 @@ export function useCopyToClipboard(config?: UseCopyToClipboardConfig) {
     isVisible,
     handleCopyToClipboard,
     canCopyToClipboard: canCopyToClipboardState,
-    label: "Copy to clipboard",
+    label: i18n.copyToClipboard,
     shortcutKeys: COPY_TO_CLIPBOARD_SHORTCUT_KEY,
     Icon: ClipboardIcon,
   }

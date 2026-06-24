@@ -105,7 +105,7 @@ export const ResetAllFormattingButton = forwardRef<
         role="button"
         tabIndex={-1}
         aria-label={label}
-        tooltip="Reset formatting"
+        tooltip={label}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
