@@ -31,7 +31,8 @@
   outline: none;
   caret-color: var(--tt-cursor-color);
 }
-.tiptap.ProseMirror p:not(:first-child):not(td p):not(th p) {
+.tiptap.ProseMirror:not(.omnibox-editor)
+  p:not(:first-child):not(td p):not(th p) {
   font-size: 1rem;
   line-height: 1.6;
   font-weight: normal;
@@ -62,7 +63,7 @@
 /* =====================
      TEXT DECORATION
      ===================== */
-.tiptap.ProseMirror a span {
+.tiptap.ProseMirror:not(.omnibox-editor) a span {
   text-decoration: underline;
 }
 .tiptap.ProseMirror s span {
@@ -115,7 +116,7 @@
 /* =====================
      LINKS
      ===================== */
-.tiptap.ProseMirror a {
+.tiptap.ProseMirror:not(.omnibox-editor) a {
   color: var(--link-text-color);
   text-decoration: underline;
 }

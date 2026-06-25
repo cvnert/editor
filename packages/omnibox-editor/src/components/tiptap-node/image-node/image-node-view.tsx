@@ -6,8 +6,9 @@ import { NodeSelection } from "@tiptap/pm/state"
 import { cn, isValidPosition } from "@/lib/tiptap-utils"
 import { getEditorTranslations, type OmniboxEditorI18n } from "@/lib/i18n"
 import {
-  getNextImageRenderState,
-  type ImageRenderState,
+  getImageRenderStateForSrc,
+  getNextImageRenderSnapshot,
+  type ImageRenderSnapshot,
 } from "./image-load-state"
 
 import "./image-node-view.css"
@@ -79,8 +80,11 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   const [resizeParams, setResizeParams] = useState<ResizeParams | undefined>()
   const [width, setWidth] = useState<number | undefined>(initialWidth)
   const [showHandles, setShowHandles] = useState(false)
-  const [imageRenderState, setImageRenderState] =
-    useState<ImageRenderState>("loading")
+  const [imageRenderSnapshot, setImageRenderSnapshot] =
+    useState<ImageRenderSnapshot>({
+      src,
+      state: "loading",
+    })
   const isResizingRef = useRef(false)
   const isMountedRef = useRef(true)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -278,14 +282,14 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
   }
 
   const imageLoadHandler = () => {
-    setImageRenderState((currentState) =>
-      getNextImageRenderState(currentState, "load")
+    setImageRenderSnapshot((currentSnapshot) =>
+      getNextImageRenderSnapshot(currentSnapshot, src, "load")
     )
   }
 
   const imageErrorHandler = () => {
-    setImageRenderState((currentState) =>
-      getNextImageRenderState(currentState, "error")
+    setImageRenderSnapshot((currentSnapshot) =>
+      getNextImageRenderSnapshot(currentSnapshot, src, "error")
     )
   }
 
@@ -312,13 +316,8 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
     }
   }, [])
 
-  useEffect(() => {
-    setImageRenderState((currentState) =>
-      getNextImageRenderState(currentState, "reset")
-    )
-  }, [src])
-
   const shouldShowCaption = showCaption || hasContent
+  const imageRenderState = getImageRenderStateForSrc(imageRenderSnapshot, src)
   const isImageLoading = imageRenderState === "loading"
 
   return (
@@ -350,9 +349,13 @@ export const ResizableImage: React.FC<ResizableImageProps> = ({
             ref={imageRef}
             src={src}
             alt={alt}
-            className={cn("tiptap-image-img", isImageLoading && "tw:invisible")}
+            className={cn(
+              "tiptap-image-img",
+              isImageLoading && "tw:invisible"
+            )}
             contentEditable={false}
             draggable={false}
+            referrerPolicy="same-origin"
             onLoad={imageLoadHandler}
             onError={imageErrorHandler}
             onClick={handleImageClick}

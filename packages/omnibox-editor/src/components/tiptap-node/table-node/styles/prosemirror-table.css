@@ -1,26 +1,30 @@
 @layer components {
 .ProseMirror .tableWrapper {
   overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ProseMirror table {
   border-collapse: collapse;
-  table-layout: fixed;
-  width: 100%;
-  overflow: hidden;
+  table-layout: auto;
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+  overflow: visible;
 }
 
 .ProseMirror td,
 .ProseMirror th {
-  vertical-align: top;
+  vertical-align: middle;
   box-sizing: border-box;
   position: relative;
 }
 
 .ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
 .ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
-  /* if there's no explicit width set and the column is not being resized, set a default width */
-  min-width: var(--default-cell-min-width);
+  min-width: 0;
 }
 
 .ProseMirror .column-resize-handle {

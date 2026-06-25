@@ -8,6 +8,8 @@ export {
 export {
   contentToMarkdown,
   contentToTiptapJson,
+  htmlTableToTiptapNode,
+  markdownWithHtmlTablesToTiptapJson,
   markdownToTiptapJson,
   tiptapJsonToMarkdown,
 } from "./lib/markdown"

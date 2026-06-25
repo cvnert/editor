@@ -41,6 +41,15 @@
   width: 100%;
   border-radius: var(--tt-radius-xs, 0.25rem);
 }
+.tiptap.ProseMirror .tiptap-image-error {
+  color: var(--fgColor-muted, var(--tt-gray-light-a-600));
+  border: 1px solid var(--borderColor-muted, var(--tt-gray-light-a-200));
+  border-radius: var(--tt-radius-xs, 0.25rem);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
 .tiptap.ProseMirror .tiptap-image-handle {
   position: absolute;
   top: 50%;

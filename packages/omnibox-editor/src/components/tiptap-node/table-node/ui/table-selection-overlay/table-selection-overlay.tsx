@@ -36,6 +36,12 @@ export interface TableSelectionOverlayProps {
 // br = bottom-right
 type ResizeHandle = "tl" | "tr" | "bl" | "br" | null
 
+export function shouldShowTableSelectionOverlay(
+  editor: Pick<Editor, "isEditable"> | null | undefined
+) {
+  return Boolean(editor?.isEditable)
+}
+
 // if an element’s edge is within 5px of the selection edge,
 // it is treated as aligned.
 const CORNER_DETECTION_TOLERANCE = 5
@@ -259,6 +265,7 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
   const [activeHandle, setActiveHandle] = useState<ResizeHandle>(null)
   const [tableDom, setTableDom] = useState<HTMLElement | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const shouldShowOverlay = shouldShowTableSelectionOverlay(editor)
 
   const anchorCellRef = useRef<number | null>(null)
   const activeHandleRef = useRef<ResizeHandle>(null)
@@ -276,7 +283,7 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
   }, [selectionRect, refs])
 
   const updateSelectionRect = useCallback(() => {
-    if (!editor) return
+    if (!editor || !shouldShowOverlay) return
 
     const { selection } = editor.state
 
@@ -310,7 +317,7 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
 
     setIsVisible(false)
     setSelectionRect((prev) => (prev ? null : prev))
-  }, [editor])
+  }, [editor, shouldShowOverlay])
 
   useResizeOverlay(editor, updateSelectionRect)
 
@@ -446,7 +453,7 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
   )
 
   useEffect(() => {
-    if (!editor) return
+    if (!editor || !shouldShowOverlay) return
 
     const handleSelectionUpdate = () => {
       updateSelectionRect()
@@ -460,7 +467,7 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
     return () => {
       editor.off("selectionUpdate", handleSelectionUpdate)
     }
-  }, [editor, updateSelectionRect, updateTableDom])
+  }, [editor, shouldShowOverlay, updateSelectionRect, updateTableDom])
 
   useEffect(() => {
     const c = tableDom?.querySelector(
@@ -469,7 +476,7 @@ export const TableSelectionOverlay: React.FC<TableSelectionOverlayProps> = ({
     containerRef.current = c ?? null
   }, [tableDom])
 
-  if (!isVisible || !selectionRect) {
+  if (!shouldShowOverlay || !isVisible || !selectionRect) {
     return null
   }
 

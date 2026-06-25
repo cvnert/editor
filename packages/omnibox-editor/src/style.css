@@ -36,11 +36,12 @@
 .omnibox-editor-layout {
   position: relative;
   display: grid;
+  min-width: 0;
   width: 100%;
   grid-template-columns:
-    [full-start] minmax(96px, 1fr)
+    [full-start] minmax(0, 1fr)
     [content-start] minmax(0, var(--omnibox-editor-content-width))
-    [content-end] minmax(96px, 1fr)
+    [content-end] minmax(0, 1fr)
     [full-end];
 }
 
@@ -111,6 +112,7 @@
 .omnibox-editor-content {
   display: flex;
   grid-column: content-start / content-end;
+  min-width: 0;
   width: 100%;
   height: 100%;
   flex: 1;
@@ -119,6 +121,8 @@
 
 .omnibox-editor-content .tiptap.ProseMirror.omnibox-editor {
   flex: 1;
+  min-width: 0;
+  max-width: 100%;
   padding-inline: 3rem;
 }
 
@@ -334,9 +338,9 @@
 @media (max-width: 63.999rem) {
   .omnibox-editor-layout {
     grid-template-columns:
-      [full-start] minmax(1rem, 1fr)
+      [full-start] minmax(0, 1fr)
       [content-start] minmax(0, var(--omnibox-editor-content-width))
-      [content-end] minmax(1rem, 1fr)
+      [content-end] minmax(0, 1fr)
       [full-end];
   }
 

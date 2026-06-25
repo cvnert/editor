@@ -10,6 +10,7 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
 
 import { useEditorI18n } from "@/lib/i18n"
+import { clipboardSliceToText } from "@/lib/clipboard"
 
 // --- Icons ---
 import { ClipboardIcon } from "@/components/tiptap-icons/clipboard-icon"
@@ -86,7 +87,7 @@ export function canCopyContent(tr: Transaction): boolean {
  * Checks if formatting can be reset for a node
  */
 export function canCopyToClipboard(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+  if (!editor) return false
 
   const tr = editor.state.tr
   return canCopyContent(tr)
@@ -112,7 +113,7 @@ export function extractContent(
     content = new Slice(Fragment.from(node), 0, 0)
   }
 
-  const textContent = content.content.textBetween(0, content.content.size, "\n")
+  const textContent = clipboardSliceToText(content)
   const htmlContent = copyWithFormatting
     ? editor.view.serializeForClipboard(content).dom.innerHTML
     : undefined
@@ -127,7 +128,7 @@ export async function copyToClipboard(
   editor: Editor | null,
   copyWithFormatting: boolean = true
 ): Promise<boolean> {
-  if (!editor || !editor.isEditable) return false
+  if (!editor) return false
 
   try {
     const { textContent, htmlContent } = extractContent(
@@ -156,8 +157,6 @@ export function shouldShowButton(props: {
   if (!hideWhenUnavailable) {
     return true
   }
-
-  if (!editor.isEditable) return false
 
   if (!editor.isActive("code")) {
     return canCopyToClipboard(editor)

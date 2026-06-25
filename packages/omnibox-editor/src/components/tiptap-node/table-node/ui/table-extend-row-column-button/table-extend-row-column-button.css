@@ -14,22 +14,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--tt-table-handle-bg-color);
+  background-color: transparent;
   border-radius: var(--tt-radius-lg);
 }
+
+.tiptap-table-extend-row-column-button:hover,
+.tiptap-table-extend-row-column-button:focus-visible,
+.tiptap-table-extend-row-column-button.editing {
+  background-color: var(--tt-table-handle-bg-color);
+}
+
 .tiptap-table-extend-row-column-button .tiptap-button-icon {
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
   color: var(--tt-table-extend-icon-color);
+  opacity: 0;
+  transition: opacity 150ms ease;
 }
+
+.tiptap-table-extend-row-column-button:hover .tiptap-button-icon,
+.tiptap-table-extend-row-column-button:focus-visible .tiptap-button-icon,
+.tiptap-table-extend-row-column-button.editing .tiptap-button-icon {
+  opacity: 1;
+}
+
 .tiptap-table-extend-row-column-button.tiptap-table-row-end-add-remove {
   width: 100%;
-  height: 0.75rem;
+  height: 1.5rem;
   cursor: row-resize;
 }
+
 .tiptap-table-extend-row-column-button.tiptap-table-column-end-add-remove {
-  width: 0.75rem;
+  width: 1.5rem;
   cursor: col-resize;
 }
 

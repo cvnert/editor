@@ -9,17 +9,18 @@
 /* =====================
      BLOCKQUOTE
      ===================== */
-.tiptap.ProseMirror blockquote {
+.tiptap.ProseMirror:not(.omnibox-editor) blockquote {
   position: relative;
   padding-left: 1em;
   padding-top: 0.375em;
   padding-bottom: 0.375em;
   margin: 1.5rem 0;
 }
-.tiptap.ProseMirror blockquote p {
+.tiptap.ProseMirror:not(.omnibox-editor) blockquote p {
   margin-top: 0;
 }
-.tiptap.ProseMirror blockquote::before, .tiptap.ProseMirror blockquote.is-empty::before {
+.tiptap.ProseMirror:not(.omnibox-editor) blockquote::before,
+.tiptap.ProseMirror:not(.omnibox-editor) blockquote.is-empty::before {
   position: absolute;
   bottom: 0;
   left: 0;

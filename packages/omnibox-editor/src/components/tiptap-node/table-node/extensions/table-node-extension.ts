@@ -9,6 +9,7 @@ import type {
 import { TableCell, TableHeader, TableRow } from "@tiptap/extension-table"
 import type { Node } from "@tiptap/pm/model"
 import { Extension } from "@tiptap/core"
+import { Plugin } from "@tiptap/pm/state"
 import {
   cellAround,
   columnResizing,
@@ -32,6 +33,7 @@ export const TableNode = Table.extend<TableOptions>({
         : this.options.cellMinWidth
 
     return [
+      readonlyTableInteractionPlugin(),
       ...(isResizable
         ? [
             columnResizing({
@@ -146,6 +148,46 @@ export const TableNode = Table.extend<TableOptions>({
     }
   },
 })
+
+function readonlyTableInteractionPlugin(): Plugin {
+  return new Plugin({
+    props: {
+      handleDOMEvents: {
+        mousedown(view, event) {
+          return shouldBlockReadonlyTableMouseDown(
+            view.editable,
+            event
+          )
+        },
+      },
+    },
+  })
+}
+
+export function shouldBlockReadonlyTableMouseDown(
+  editable: boolean,
+  event: MouseEvent
+): boolean {
+  if (editable || !event.target) {
+    return false
+  }
+
+  const closest = (event.target as { closest?: unknown }).closest
+  if (typeof closest !== "function") {
+    return false
+  }
+
+  const isTableTarget = Boolean(
+    closest.call(event.target, "[data-content-type=table], .tableWrapper")
+  )
+
+  if (!isTableTarget) {
+    return false
+  }
+
+  event.preventDefault()
+  return true
+}
 
 const TableCellNode = TableCell.extend<TableCellOptions>({
   addKeyboardShortcuts() {

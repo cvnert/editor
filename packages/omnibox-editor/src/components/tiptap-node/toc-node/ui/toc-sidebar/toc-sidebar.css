@@ -34,7 +34,7 @@
   grid-column: content-end/full-end;
   padding-inline-start: 0;
   position: relative;
-  z-index: 80;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   opacity: 1;

@@ -1,0 +1,69 @@
+@layer components {
+.tiptap-math-editor {
+  width: min(32rem, calc(100vw - 2rem));
+  border: 1px solid var(--tt-gray-light-a-200);
+  border-radius: 0.75rem;
+  background: var(--tt-bg-color);
+  box-shadow: var(--tt-shadow-elevated-md);
+  color: var(--tt-theme-text, var(--tt-gray-light-900));
+}
+
+.dark .tiptap-math-editor {
+  border-color: var(--tt-gray-dark-a-200);
+  color: var(--tt-theme-text, var(--tt-gray-dark-900));
+}
+
+.tiptap-math-editor__body {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem;
+}
+
+.tiptap-math-editor__input {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--fontStack-monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.tiptap-math-editor__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tiptap-math-editor__button {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: var(--tt-gray-light-a-700);
+}
+
+.dark .tiptap-math-editor__button {
+  color: var(--tt-gray-dark-a-700);
+}
+
+.tiptap-math-editor__button:hover:not(:disabled) {
+  background: var(--tt-gray-light-a-100);
+  color: var(--tt-gray-light-900);
+}
+
+.dark .tiptap-math-editor__button:hover:not(:disabled) {
+  background: var(--tt-gray-dark-a-100);
+  color: var(--tt-gray-dark-900);
+}
+
+.tiptap-math-editor__button:disabled {
+  opacity: 0.45;
+}
+
+.tiptap-math-editor__icon {
+  width: 1rem;
+  height: 1rem;
+}
+}

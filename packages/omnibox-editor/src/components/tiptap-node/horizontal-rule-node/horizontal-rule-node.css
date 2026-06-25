@@ -9,12 +9,12 @@
 /* =====================
      HORIZONTAL RULE
      ===================== */
-.tiptap.ProseMirror hr {
+.tiptap.ProseMirror:not(.omnibox-editor) hr {
   border: none;
   height: 1px;
   background-color: var(--horizontal-rule-color);
 }
-.tiptap.ProseMirror [data-type=horizontalRule] {
+.tiptap.ProseMirror:not(.omnibox-editor) [data-type=horizontalRule] {
   margin-top: 2.25em;
   margin-bottom: 2.25em;
   padding-top: 0.75rem;

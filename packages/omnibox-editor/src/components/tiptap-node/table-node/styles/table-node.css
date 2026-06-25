@@ -4,12 +4,8 @@
   --tt-table-selected-bg: rgba(195, 189, 255, 0.4);
   --tt-table-selected-stroke: var(--tt-brand-color-400);
   --tt-table-column-resize-handle-bg: var(--tt-brand-color-400);
-  --tt-table-cell-padding: 0.5rem;
+  --tt-table-cell-padding: 0.25rem 0.5rem;
   --tt-table-margin-block: 1.25rem;
-  --tt-table-pad-block-start: 1rem; /* 8px */
-  --tt-table-pad-block-end: 1.5rem; /* 24px */
-  --tt-table-pad-inline-start: 1rem; /* 8px */
-  --tt-table-pad-inline-end: 1.5rem; /* 24px */
 }
 
 .dark {
@@ -20,35 +16,48 @@
 }
 
 .tiptap [data-content-type=table] {
+  min-width: 0;
+  max-width: 100%;
   margin-block: var(--tt-table-margin-block);
+  overflow: visible;
 }
 
 .tiptap [data-content-type=table] .tableWrapper {
-  padding-block-start: var(--tt-table-pad-block-start);
-  padding-inline-start: var(--tt-table-pad-inline-start);
-  padding-inline-end: var(--tt-table-pad-inline-end);
-  padding-block-end: var(--tt-table-pad-block-end);
-  margin-left: -1rem;
+  box-sizing: border-box;
+  padding: 0;
+  overflow-x: auto;
   overflow-y: hidden;
   position: relative;
+  max-width: 100%;
   width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tiptap table {
-  width: auto !important;
-  word-break: break-word;
+  width: max-content;
+  min-width: 100%;
+  table-layout: auto;
+  word-break: normal;
+  overflow: visible;
 }
 
 .tiptap th,
 .tiptap td {
   border: 1px solid var(--tt-table-border-color);
   padding: var(--tt-table-cell-padding);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.tiptap th > p,
+.tiptap td > p {
+  margin: 0;
 }
 
 .tiptap table th {
   background-color: var(--tt-gray-light-a-100);
   font-weight: 700;
-  text-align: left;
+  text-align: center;
 }
 
 .ProseMirror .column-resize-handle {
@@ -178,13 +187,12 @@
 /* tiptap uses colwidth instead of data-colwidth, se we need to adjust this style from prosemirror-tables */
 .ProseMirror td,
 .ProseMirror th {
-  min-width: auto !important;
+  min-width: 0 !important;
 }
 
 .ProseMirror td:not([colwidth]):not(.column-resize-dragging),
 .ProseMirror th:not([colwidth]):not(.column-resize-dragging) {
-  /* if there's no explicit width set and the column is not being resized, set a default width */
-  min-width: var(--default-cell-min-width) !important;
+  min-width: 0 !important;
 }
 
 .tiptap-table-dropcursor {

@@ -33,7 +33,10 @@ const parseImageAttributes = (img: Element): Partial<ImageAttributes> => ({
 function buildImageHTMLAttributes(
   attrs: ImageAttributes
 ): Record<string, string> {
-  const result: Record<string, string> = { src: attrs.src || "" }
+  const result: Record<string, string> = {
+    src: attrs.src || "",
+    referrerpolicy: "same-origin",
+  }
 
   if (attrs.alt) result.alt = attrs.alt
   if (attrs.title) result.title = attrs.title

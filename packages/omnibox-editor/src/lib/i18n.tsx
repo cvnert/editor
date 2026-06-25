@@ -31,6 +31,9 @@ type OmniboxEditorTranslationMap = {
   delete: string
   discard: string
   duplicateNode: string
+  applyFormula: string
+  closeFormulaEditor: string
+  editFormula: string
   emoji: string
   emojiSubtext: string
   failedToRenderChart: string
@@ -116,6 +119,9 @@ const zhCNTranslations: OmniboxEditorTranslationMap = {
   delete: "删除",
   discard: "丢弃",
   duplicateNode: "复制节点",
+  applyFormula: "应用公式",
+  closeFormulaEditor: "关闭公式编辑器",
+  editFormula: "编辑公式",
   emoji: "表情",
   emojiSubtext: "插入表情",
   failedToRenderChart: "图表渲染失败",
@@ -199,6 +205,9 @@ const enTranslations: OmniboxEditorTranslationMap = {
   delete: "Delete",
   discard: "Discard",
   duplicateNode: "Duplicate node",
+  applyFormula: "Apply formula",
+  closeFormulaEditor: "Close formula editor",
+  editFormula: "Edit formula",
   emoji: "Emoji",
   emojiSubtext: "Insert an emoji",
   failedToRenderChart: "Failed to render chart",

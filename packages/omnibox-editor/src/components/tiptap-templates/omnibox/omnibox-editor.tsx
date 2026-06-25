@@ -28,6 +28,7 @@ import {
   getHierarchicalIndexes,
   TableOfContents,
 } from "@tiptap/extension-table-of-contents";
+import { NodeSelection } from "@tiptap/pm/state";
 
 // --- Hooks ---
 import { useUiEditorState } from "@/hooks/use-ui-editor-state";
@@ -64,6 +65,7 @@ import "@/components/tiptap-node/image-node/image-node.css";
 import "@/components/tiptap-node/heading-node/heading-node.css";
 import "@/components/tiptap-node/paragraph-node/paragraph-node.css";
 import "@/styles/github-markdown.css";
+import "@/styles/katex.css";
 
 // --- Tiptap UI ---
 import { EmojiDropdownMenu } from "@/components/tiptap-ui/emoji-dropdown-menu";
@@ -102,6 +104,7 @@ import {
   getExternalContentUpdate,
   normalizeEditorContent,
 } from "@/lib/editor-content";
+import { clipboardSliceToText } from "@/lib/clipboard";
 import {
   getCollaborationUser,
   getStarterKitUndoRedo,
@@ -117,8 +120,13 @@ import {
 import { UserProvider, useUser } from "@/contexts/user-context";
 import { awarenessUserToEditorUser } from "@/lib/editor-users";
 import type {
+  Node as ProseMirrorNode,
+} from "@tiptap/pm/model";
+import type {
   SlashMenuAiAction,
 } from "@/components/tiptap-ui/slash-dropdown-menu";
+import { MathEditor } from "@/components/tiptap-ui/math-editor";
+import type { MathNodeEditTarget } from "@/lib/math-editor";
 import type {
   EditorProviderProps,
   OmniboxEditorCollaborationConfig,
@@ -170,7 +178,15 @@ function getAiSubmitHandler(ai?: OmniboxEditorAiFeature) {
   return typeof ai === "boolean" ? undefined : ai?.onSubmit;
 }
 
-export function EditorContentArea({ ai }: { ai?: OmniboxEditorAiFeature }) {
+export function EditorContentArea({
+  ai,
+  mathEditTarget,
+  onMathEditOpenChange,
+}: {
+  ai?: OmniboxEditorAiFeature;
+  mathEditTarget: MathNodeEditTarget | null;
+  onMathEditOpenChange: (open: boolean) => void;
+}) {
   const { editor } = useContext(EditorContext)!;
   const { mentionUsers } = useUser();
   const { isDragging } = useUiEditorState(editor);
@@ -478,6 +494,11 @@ export function EditorContentArea({ ai }: { ai?: OmniboxEditorAiFeature }) {
           }}
         />
       ) : null}
+      <MathEditor
+        editor={editor}
+        target={mathEditTarget}
+        onOpenChange={onMathEditOpenChange}
+      />
       <OmniboxToolbarFloating />
       {createPortal(<MobileToolbar />, document.body)}
     </EditorContent>
@@ -545,6 +566,27 @@ function getOnlineUsersFromEditorStorage(editor: ReturnType<typeof useEditor>) {
   return storageUsers
     .map((user) => awarenessUserToEditorUser(user))
     .filter((user): user is NonNullable<typeof user> => Boolean(user));
+}
+
+function getMathEditTarget(
+  node: ProseMirrorNode,
+  pos: number,
+): MathNodeEditTarget | null {
+  if (node.type.name !== "blockMath" && node.type.name !== "inlineMath") {
+    return null;
+  }
+
+  return {
+    type: node.type.name,
+    pos,
+    latex: String(node.attrs.latex || ""),
+  };
+}
+
+function selectMathNode(editor: NonNullable<ReturnType<typeof useEditor>>, pos: number) {
+  editor.view.dispatch(
+    editor.state.tr.setSelection(NodeSelection.create(editor.state.doc, pos)),
+  );
 }
 
 function CollaborationUsersBridge({
@@ -625,6 +667,11 @@ export function EditorProvider(props: EditorProviderProps) {
   const handleImageUploadError =
     onImageUploadError ??
     ((error: Error) => console.error(`${i18n.uploadFailed}:`, error));
+  const [mathEditTarget, setMathEditTarget] =
+    useState<MathNodeEditTarget | null>(null);
+  const editorRef = useRef<NonNullable<ReturnType<typeof useEditor>> | null>(
+    null,
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -644,6 +691,7 @@ export function EditorProvider(props: EditorProviderProps) {
       attributes: {
         class: "omnibox-editor",
       },
+      clipboardTextSerializer: (slice) => clipboardSliceToText(slice),
     },
     extensions: [
       StarterKit.configure({
@@ -705,7 +753,26 @@ export function EditorProvider(props: EditorProviderProps) {
       }),
       NodeAlignment,
       TextStyle,
-      Mathematics,
+      Mathematics.configure({
+        blockOptions: {
+          onClick: (node, pos) => {
+            const activeEditor = editorRef.current;
+            if (!activeEditor?.isEditable) return;
+
+            selectMathNode(activeEditor, pos);
+            setMathEditTarget(getMathEditTarget(node, pos));
+          },
+        },
+        inlineOptions: {
+          onClick: (node, pos) => {
+            const activeEditor = editorRef.current;
+            if (!activeEditor?.isEditable) return;
+
+            selectMathNode(activeEditor, pos);
+            setMathEditTarget(getMathEditTarget(node, pos));
+          },
+        },
+      }),
       Superscript,
       Subscript,
       Indent,
@@ -753,6 +820,10 @@ export function EditorProvider(props: EditorProviderProps) {
       }),
     ],
   });
+
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   useEffect(() => {
     if (!editor) {
@@ -808,7 +879,15 @@ export function EditorProvider(props: EditorProviderProps) {
               isEmbedded && "omnibox-editor-layout--embedded",
             )}
           >
-            <EditorContentArea ai={ai} />
+            <EditorContentArea
+              ai={ai}
+              mathEditTarget={mathEditTarget}
+              onMathEditOpenChange={(open) => {
+                if (!open) {
+                  setMathEditTarget(null);
+                }
+              }}
+            />
             {shouldShowToc ? <TocSidebar topOffset={48} /> : null}
           </div>
 

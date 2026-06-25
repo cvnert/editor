@@ -13,6 +13,10 @@ const externalPackages = [
 ]
 
 function isExternal(id: string) {
+  if (id.endsWith(".css")) {
+    return false
+  }
+
   return externalPackages.some(
     (packageName) => id === packageName || id.startsWith(`${packageName}/`)
   )
