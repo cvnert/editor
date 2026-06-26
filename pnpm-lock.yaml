@@ -110,7 +110,7 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      cvnert-editor:
+      omnibox-editor:
         specifier: workspace:*
         version: link:../../packages/omnibox-editor
       is-hotkey:

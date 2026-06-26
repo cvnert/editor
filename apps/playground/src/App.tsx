@@ -7,14 +7,14 @@ import {
 import { lazy, Suspense, useMemo, useState } from "react";
 import {
   type OmniboxEditorAiSubmitPayload,
-  type CvnertEditorUpdatePayload,
+  type OmniboxEditorUpdatePayload,
   type UploadFunction,
-} from "cvnert-editor";
+} from "omnibox-editor";
 import { getCollaborationServerUrl } from "./collaboration-url";
 
-const CvnertEditor = lazy(() =>
-  import("cvnert-editor").then((module) => ({
-    default: module.CvnertEditor,
+const OmniboxEditor = lazy(() =>
+  import("omnibox-editor").then((module) => ({
+    default: module.OmniboxEditor,
   })),
 );
 
@@ -31,14 +31,14 @@ const initialContent: Content = {
       content: [
         {
           type: "text",
-          text: "This playground consumes cvnert-editor like an app would.",
+          text: "This playground consumes omnibox-editor like an app would.",
         },
       ],
     },
   ],
 };
 
-const handleEditorUpdate = ({ json }: CvnertEditorUpdatePayload) => {
+const handleEditorUpdate = ({ json }: OmniboxEditorUpdatePayload) => {
   console.info("Editor updated", json);
 };
 
@@ -50,7 +50,7 @@ const uploadImage: UploadFunction = async (file, onProgress) => {
 const AI_DEMO_ENDPOINT = "http://127.0.0.1:4174/api/ai";
 const AI_REVEAL_CHARS_PER_FRAME = 2;
 const AI_REVEAL_FRAME_MS = 24;
-const COLLAB_ROOM_NAME = "cvnert-editor-playground";
+const COLLAB_ROOM_NAME = "omnibox-editor-playground";
 const PLAYGROUND_COLLABORATION_ENABLED = true;
 const PLAYGROUND_COLLABORATION_DEFAULT_ON = true;
 
@@ -372,7 +372,7 @@ function CollaborativeEditor() {
   );
 
   return (
-    <CvnertEditor
+    <OmniboxEditor
       ai={{ enabled: true, onSubmit: handleAiSubmit }}
       collaboration={collaboration}
       content={initialContent}
@@ -416,7 +416,7 @@ export function App() {
             </HocuspocusRoom>
           </HocuspocusProviderWebsocketComponent>
         ) : (
-          <CvnertEditor
+          <OmniboxEditor
             ai={{ enabled: true, onSubmit: handleAiSubmit }}
             content={initialContent}
             placeholder="Start writing..."

@@ -2,7 +2,6 @@ import "./style.css"
 
 export {
   OmniboxEditor,
-  OmniboxEditor as CvnertEditor,
 } from "./components/tiptap-templates/omnibox/omnibox-editor"
 
 export {
@@ -17,8 +16,6 @@ export {
 export { getEditorTranslations } from "./lib/i18n"
 
 export type {
-  CvnertEditorProps,
-  CvnertEditorUpdatePayload,
   OmniboxEditorAiAction,
   OmniboxEditorCollaborationConfig,
   OmniboxEditorCollaborationProvider,

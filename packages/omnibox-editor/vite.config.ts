@@ -42,8 +42,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
-      name: "CvnertEditor",
-      fileName: "cvnert-editor",
+      name: "OmniboxEditor",
+      fileName: "omnibox-editor",
     },
     rollupOptions: {
       external: isExternal,

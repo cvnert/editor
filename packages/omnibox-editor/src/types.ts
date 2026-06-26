@@ -88,7 +88,5 @@ export interface OmniboxEditorProps {
   onImageUploadSuccess?: (url: string) => void
 }
 
-export type CvnertEditorUpdatePayload = OmniboxEditorUpdatePayload
-export type CvnertEditorProps = OmniboxEditorProps
 
 export type EditorProviderProps = OmniboxEditorProps

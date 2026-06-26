@@ -1,8 +1,8 @@
-# cvnert-editor workspace
+# omnibox-editor workspace
 
-This repository is a pnpm workspace for the `cvnert-editor` npm package and its local playground.
+This repository is a pnpm workspace for the `omnibox-editor` npm package and its local playground.
 
-`cvnert-editor` is a React block editor package built on Tiptap. The package source lives in `packages/omnibox-editor`, and the preview app lives in `apps/playground`.
+`omnibox-editor` is a React block editor package built on Tiptap. The package source lives in `packages/omnibox-editor`, and the preview app lives in `apps/playground`.
 
 ## Structure
 
@@ -10,7 +10,7 @@ This repository is a pnpm workspace for the `cvnert-editor` npm package and its 
 apps/
   playground/          Vite app for local preview and integration testing
 packages/
-  omnibox-editor/      Published npm package: cvnert-editor
+  omnibox-editor/      Published npm package: omnibox-editor
 scripts/               Build helper scripts
 ```
 
@@ -39,7 +39,7 @@ Open:
 http://127.0.0.1:4173
 ```
 
-The playground imports `cvnert-editor` through the workspace dependency, so it behaves like a consuming React app while still using the local package code.
+The playground imports `omnibox-editor` through the workspace dependency, so it behaves like a consuming React app while still using the local package code.
 
 ## Local Development
 
@@ -58,7 +58,7 @@ packages/omnibox-editor/src
 The playground depends on the package with:
 
 ```json
-"cvnert-editor": "workspace:*"
+"omnibox-editor": "workspace:*"
 ```
 
 That means local package changes are used by the playground without publishing to npm.
@@ -73,8 +73,8 @@ pnpm build
 For a focused package-only loop, run:
 
 ```bash
-pnpm --filter cvnert-editor typecheck
-pnpm --filter cvnert-editor build
+pnpm --filter omnibox-editor typecheck
+pnpm --filter omnibox-editor build
 ```
 
 If the playground needs a production build check, run:
@@ -94,7 +94,7 @@ pnpm build
 Build only the npm package:
 
 ```bash
-pnpm --filter cvnert-editor build
+pnpm --filter omnibox-editor build
 ```
 
 The package build outputs compiled files to:
@@ -114,7 +114,7 @@ pnpm typecheck
 Check only the package:
 
 ```bash
-pnpm --filter cvnert-editor typecheck
+pnpm --filter omnibox-editor typecheck
 ```
 
 ## Package Usage
@@ -122,17 +122,17 @@ pnpm --filter cvnert-editor typecheck
 Install from npm:
 
 ```bash
-npm install cvnert-editor
+npm install omnibox-editor
 ```
 
 Use it in a React app:
 
 ```tsx
-import { CvnertEditor } from "cvnert-editor"
-import "cvnert-editor/style.css"
+import { OmniboxEditor } from "omnibox-editor"
+import "omnibox-editor/style.css"
 
 export function App() {
-  return <CvnertEditor placeholder="Start writing..." />
+  return <OmniboxEditor placeholder="Start writing..." />
 }
 ```
 
@@ -143,7 +143,7 @@ More package-level usage notes are in `packages/omnibox-editor/README.md`.
 Create a local tarball for testing package installation:
 
 ```bash
-pnpm --filter cvnert-editor pack:local
+pnpm --filter omnibox-editor pack:local
 ```
 
 The tarball is written under:

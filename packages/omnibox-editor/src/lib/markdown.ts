@@ -70,8 +70,8 @@ const markdownManager = new MarkdownManager({
 });
 
 function logMarkdownConversion(label: string, input: unknown, output: unknown) {
-  console.log(`[cvnert-editor:${label}] input`, input);
-  console.log(`[cvnert-editor:${label}] output`, output);
+  console.log(`[omnibox-editor:${label}] input`, input);
+  console.log(`[omnibox-editor:${label}] output`, output);
 }
 
 function shouldLogMarkdownConversion(options?: MarkdownParseOptions) {

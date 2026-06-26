@@ -1,20 +1,20 @@
 {
-  "name": "cvnert-editor",
+  "name": "omnibox-editor",
   "private": false,
-  "version": "0.2.4",
-  "description": "A Tiptap-powered block editor kit for React.",
+  "version": "0.0.1",
+  "description": "A OmniBox editor",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/cvnert-editor.umd.cjs",
-  "module": "./dist/cvnert-editor.js",
+  "main": "./dist/omnibox-editor.umd.cjs",
+  "module": "./dist/omnibox-editor.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/cvnert-editor.js",
-      "require": "./dist/cvnert-editor.umd.cjs"
+      "import": "./dist/omnibox-editor.js",
+      "require": "./dist/omnibox-editor.umd.cjs"
     },
-    "./style.css": "./dist/cvnert-editor.css"
+    "./style.css": "./dist/omnibox-editor.css"
   },
   "files": [
     "dist",

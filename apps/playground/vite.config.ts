@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '../../packages/omnibox-editor/src'),
-      'cvnert-editor': path.resolve(
+      'omnibox-editor': path.resolve(
         __dirname,
         '../../packages/omnibox-editor/src/index.ts'
       ),

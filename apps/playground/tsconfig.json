@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["../../packages/omnibox-editor/src/*", "src/*"],
-      "cvnert-editor": ["../../packages/omnibox-editor/src/index.ts"]
+      "omnibox-editor": ["../../packages/omnibox-editor/src/index.ts"]
     }
   },
   "include": ["src", "vite.config.ts"]
