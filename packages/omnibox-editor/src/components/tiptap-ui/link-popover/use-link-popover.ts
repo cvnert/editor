@@ -13,6 +13,7 @@ import {
   isNodeTypeSelected,
   sanitizeUrl,
 } from "@/lib/tiptap-utils"
+import { useEditorI18n } from "@/lib/i18n"
 
 /**
  * Configuration for the link popover functionality
@@ -275,6 +276,7 @@ export function useLinkPopover(config?: UseLinkPopoverConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const { isVisible, canSet, isActive } = useLinkState({
     editor,
@@ -290,7 +292,7 @@ export function useLinkPopover(config?: UseLinkPopoverConfig) {
     isVisible,
     canSet,
     isActive,
-    label: "Link",
+    label: i18n.link,
     Icon: LinkIcon,
     ...linkHandler,
   }

@@ -4,6 +4,7 @@ import type { Node } from "@tiptap/pm/model"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -422,6 +423,7 @@ export function useTableSortRowColumn(
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(editor, index, orientation)
 
@@ -453,13 +455,19 @@ export function useTableSortRowColumn(
   }, [editor, index, orientation, direction, tablePos, onSorted])
 
   const label = useMemo(() => {
-    const orientationLabels =
-      tableSortRowColumnLabels[selectionType?.orientation || "row"]
-    return (
-      orientationLabels[direction] ||
-      `Sort ${selectionType?.orientation} ${direction}`
-    )
-  }, [selectionType, direction])
+    if (selectionType?.orientation === "column") {
+      return direction === "asc" ? i18n.sortColumnAsc : i18n.sortColumnDesc
+    }
+
+    return direction === "asc" ? i18n.sortRowAsc : i18n.sortRowDesc
+  }, [
+    direction,
+    i18n.sortColumnAsc,
+    i18n.sortColumnDesc,
+    i18n.sortRowAsc,
+    i18n.sortRowDesc,
+    selectionType,
+  ])
 
   const Icon = useMemo(() => {
     return tableSortRowColumnIcons[direction] || ArrowDownAZIcon

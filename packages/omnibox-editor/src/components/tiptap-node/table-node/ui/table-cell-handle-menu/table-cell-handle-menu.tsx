@@ -5,6 +5,7 @@ import type { Editor } from "@tiptap/react"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { cn, SR_ONLY } from "@/lib/tiptap-utils"
@@ -41,31 +42,40 @@ interface TableAction {
   shortcutBadge?: React.ReactNode
 }
 
+export function getTableCellActionLabels(i18n: OmniboxEditorI18n) {
+  return {
+    merge: i18n.mergeCells,
+    split: i18n.splitCell,
+    clear: i18n.clearContents,
+  }
+}
+
 /**
  * Hook to manage all table actions and their availability
  */
-function useTableActions() {
+function useTableActions(i18n: OmniboxEditorI18n) {
+  const labels = getTableCellActionLabels(i18n)
   const mergeCellAction = useTableMergeSplitCell({ action: "merge" })
   const splitCellAction = useTableMergeSplitCell({ action: "split" })
   const clearContentAction = useTableClearRowColumnContent({ resetAttrs: true })
 
   const mergeAction: TableAction = {
     icon: mergeCellAction.Icon,
-    label: mergeCellAction.label,
+    label: labels.merge,
     onClick: mergeCellAction.handleExecute,
     isAvailable: mergeCellAction.canExecute,
   }
 
   const splitAction: TableAction = {
     icon: splitCellAction.Icon,
-    label: splitCellAction.label,
+    label: labels.split,
     onClick: splitCellAction.handleExecute,
     isAvailable: splitCellAction.canExecute,
   }
 
   const clearAction: TableAction = {
     icon: clearContentAction.Icon,
-    label: clearContentAction.label,
+    label: labels.clear,
     onClick: clearContentAction.handleClear,
     isAvailable: clearContentAction.canClearRowColumnContent,
   }
@@ -127,13 +137,24 @@ const TableActionItem = ({ action }: { action: TableAction }) => {
   )
 }
 
-const TableActionMenu = ({ onClose }: { onClose: () => void }) => {
-  const { mergeAction, splitAction, clearAction } = useTableActions()
+const TableActionMenu = ({
+  i18n,
+  onClose,
+}: {
+  i18n: OmniboxEditorI18n
+  onClose: () => void
+}) => {
+  const { mergeAction, splitAction, clearAction } = useTableActions(i18n)
 
   const hasMergeOrSplit = mergeAction.isAvailable || splitAction.isAvailable
 
   return (
-    <MenuContent autoFocusOnShow modal onClose={onClose}>
+    <MenuContent
+      autoFocusOnShow
+      autoFocusOnHide={false}
+      modal
+      onClose={onClose}
+    >
       <Combobox style={SR_ONLY} />
       <ComboboxList style={{ minWidth: "15rem" }}>
         {hasMergeOrSplit && (
@@ -168,6 +189,7 @@ export const TableCellHandleMenu = forwardRef<
   TableCellHandleMenuProps
 >(({ editor: providedEditor, onOpenChange, className, ...props }, ref) => {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const { isMenuOpen, handleMenuToggle, closeMenu } = useTableCellHandleMenu({
     editor,
   })
@@ -189,7 +211,7 @@ export const TableCellHandleMenu = forwardRef<
             isMenuOpen && "menu-opened",
             className
           )}
-          aria-label="Table cells option"
+          aria-label={i18n.tableCellsOption}
           aria-haspopup="menu"
           aria-expanded={isMenuOpen}
           {...props}
@@ -198,7 +220,7 @@ export const TableCellHandleMenu = forwardRef<
         </MenuButton>
       }
     >
-      <TableActionMenu onClose={closeMenu} />
+      <TableActionMenu i18n={i18n} onClose={closeMenu} />
     </Menu>
   )
 })

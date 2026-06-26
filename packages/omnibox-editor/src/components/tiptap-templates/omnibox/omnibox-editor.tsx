@@ -53,6 +53,7 @@ import { TableHandleExtension } from "@/components/tiptap-node/table-node/extens
 import { TableHandle } from "@/components/tiptap-node/table-node/ui/table-handle/table-handle";
 import { TableSelectionOverlay } from "@/components/tiptap-node/table-node/ui/table-selection-overlay";
 import { TableCellHandleMenu } from "@/components/tiptap-node/table-node/ui/table-cell-handle-menu";
+import { TableContextMenu } from "@/components/tiptap-node/table-node/ui/table-context-menu";
 import { TableExtendRowColumnButtons } from "@/components/tiptap-node/table-node/ui/table-extend-row-column-button";
 import "@/components/tiptap-node/table-node/styles/prosemirror-table.css";
 import "@/components/tiptap-node/table-node/styles/table-node.css";
@@ -893,6 +894,7 @@ export function EditorProvider(props: EditorProviderProps) {
 
           <TableExtendRowColumnButtons />
           <TableHandle />
+          <TableContextMenu editor={editor} />
           <TableSelectionOverlay
             showResizeHandles={true}
             cellMenu={(props) => (

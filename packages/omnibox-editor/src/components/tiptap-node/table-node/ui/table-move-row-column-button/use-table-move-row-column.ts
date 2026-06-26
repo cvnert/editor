@@ -14,6 +14,7 @@ import type { Node } from "@tiptap/pm/model"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -422,6 +423,7 @@ export function useTableMoveRowColumn(config: UseTableMoveRowColumnConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(editor, index, orientation)
 
@@ -455,13 +457,19 @@ export function useTableMoveRowColumn(config: UseTableMoveRowColumnConfig) {
   }, [editor, index, orientation, direction, tablePos, onMoved])
 
   const label = useMemo(() => {
-    const orientationLabels =
-      tableMoveRowColumnLabels[selectionType?.orientation || "row"]
-    return (
-      orientationLabels[direction] ||
-      `Move ${selectionType?.orientation} ${direction}`
-    )
-  }, [selectionType, direction])
+    if (selectionType?.orientation === "column") {
+      return direction === "left" ? i18n.moveColumnLeft : i18n.moveColumnRight
+    }
+
+    return direction === "up" ? i18n.moveRowUp : i18n.moveRowDown
+  }, [
+    direction,
+    i18n.moveColumnLeft,
+    i18n.moveColumnRight,
+    i18n.moveRowDown,
+    i18n.moveRowUp,
+    selectionType,
+  ])
 
   const Icon = useMemo(() => {
     return tableMoveRowColumnIcons[direction]

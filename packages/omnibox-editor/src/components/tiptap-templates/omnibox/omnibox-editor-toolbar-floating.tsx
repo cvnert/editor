@@ -25,6 +25,7 @@ import {
 } from "@/components/tiptap-ui/text-align-button"
 import { TurnIntoDropdown } from "@/components/tiptap-ui/turn-into-dropdown"
 import { IndentButton } from "@/components/tiptap-ui/indent-button"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Utils ---
 import { isSelectionValid } from "@/lib/tiptap-collab-utils"
@@ -147,6 +148,7 @@ export function MoreOptions({
   ...props
 }: MoreOptionsProps) {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [show, setShow] = useState(false)
 
   useEffect(() => {
@@ -185,7 +187,8 @@ export function MoreOptions({
               variant="ghost"
               role="button"
               tabIndex={-1}
-              tooltip="More options"
+              aria-label={i18n.moreOptions}
+              tooltip={i18n.moreOptions}
               {...props}
             >
               <MoreVerticalIcon className="tiptap-button-icon" />

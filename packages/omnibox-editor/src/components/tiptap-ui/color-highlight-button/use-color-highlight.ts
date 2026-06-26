@@ -12,6 +12,7 @@ import {
   isNodeTypeSelected,
   isExtensionAvailable,
 } from "@/lib/tiptap-utils"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Icons ---
 import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
@@ -228,9 +229,17 @@ export function removeHighlight(
   if (!canColorHighlight(editor, mode)) return false
 
   if (mode === "mark") {
-    return editor.chain().focus().unsetMark("highlight").run()
+    return editor
+      .chain()
+      .focus(undefined, { scrollIntoView: false })
+      .unsetMark("highlight")
+      .run()
   } else {
-    return editor.chain().focus().unsetNodeBackgroundColor().run()
+    return editor
+      .chain()
+      .focus(undefined, { scrollIntoView: false })
+      .unsetNodeBackgroundColor()
+      .run()
   }
 }
 
@@ -278,7 +287,9 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const isMobile = useIsBreakpoint()
+  const resolvedLabel = label || i18n.highlightColor
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canColorHighlightState = canColorHighlight(editor, mode)
   const actualColor = highlightColor
@@ -303,7 +314,7 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   }, [editor, hideWhenUnavailable, mode])
 
   const handleColorHighlight = useCallback(() => {
-    if (!editor || !canColorHighlightState || !actualColor || !label)
+    if (!editor || !canColorHighlightState || !actualColor || !resolvedLabel)
       return false
 
     if (mode === "mark") {
@@ -319,11 +330,11 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
       setTimeout(() => {
         const success = editor
           .chain()
-          .focus()
+          .focus(undefined, { scrollIntoView: false })
           .toggleHighlight({ color: actualColor })
           .run()
         if (success) {
-          onApplied?.({ color: actualColor, label, mode })
+          onApplied?.({ color: actualColor, label: resolvedLabel, mode })
         }
         return success
       }, 0)
@@ -332,24 +343,31 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
     } else {
       const success = editor
         .chain()
-        .focus()
+        .focus(undefined, { scrollIntoView: false })
         .toggleNodeBackgroundColor(actualColor)
         .run()
 
       if (success) {
-        onApplied?.({ color: actualColor, label, mode })
+        onApplied?.({ color: actualColor, label: resolvedLabel, mode })
       }
       return success
     }
-  }, [canColorHighlightState, actualColor, editor, label, onApplied, mode])
+  }, [
+    canColorHighlightState,
+    actualColor,
+    editor,
+    resolvedLabel,
+    onApplied,
+    mode,
+  ])
 
   const handleRemoveHighlight = useCallback(() => {
     const success = removeHighlight(editor, mode)
     if (success) {
-      onApplied?.({ color: "", label: "Remove highlight", mode })
+      onApplied?.({ color: "", label: i18n.removeHighlight, mode })
     }
     return success
-  }, [editor, onApplied, mode])
+  }, [editor, i18n.removeHighlight, onApplied, mode])
 
   useHotkeys(
     COLOR_HIGHLIGHT_SHORTCUT_KEY,
@@ -370,7 +388,7 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
     handleColorHighlight,
     handleRemoveHighlight,
     canColorHighlight: canColorHighlightState,
-    label: label || `Highlight`,
+    label: resolvedLabel,
     shortcutKeys: COLOR_HIGHLIGHT_SHORTCUT_KEY,
     Icon: HighlighterIcon,
     mode,

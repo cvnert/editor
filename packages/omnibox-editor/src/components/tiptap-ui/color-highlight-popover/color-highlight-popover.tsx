@@ -36,6 +36,7 @@ import {
   useColorHighlight,
 } from "@/components/tiptap-ui/color-highlight-button"
 import { ButtonGroup } from "@/components/tiptap-ui-primitive/button-group"
+import { useEditorI18n } from "@/lib/i18n"
 
 export interface ColorHighlightPopoverContentProps {
   /**
@@ -76,22 +77,26 @@ export interface ColorHighlightPopoverProps
 export const ColorHighlightPopoverButton = forwardRef<
   HTMLButtonElement,
   ButtonProps
->(({ className, children, ...props }, ref) => (
-  <Button
-    type="button"
-    className={className}
-    variant="ghost"
-    data-appearance="default"
-    role="button"
-    tabIndex={-1}
-    aria-label="Highlight text"
-    tooltip="Highlight"
-    ref={ref}
-    {...props}
-  >
-    {children ?? <HighlighterIcon className="tiptap-button-icon" />}
-  </Button>
-))
+>(({ className, children, ...props }, ref) => {
+  const i18n = useEditorI18n()
+
+  return (
+    <Button
+      type="button"
+      className={className}
+      variant="ghost"
+      data-appearance="default"
+      role="button"
+      tabIndex={-1}
+      aria-label={i18n.textHighlighter}
+      tooltip={i18n.highlightColor}
+      ref={ref}
+      {...props}
+    >
+      {children ?? <HighlighterIcon className="tiptap-button-icon" />}
+    </Button>
+  )
+})
 
 ColorHighlightPopoverButton.displayName = "ColorHighlightPopoverButton"
 
@@ -106,13 +111,14 @@ export function ColorHighlightPopoverContent({
   ]),
   useColorValue = false,
 }: ColorHighlightPopoverContentProps) {
+  const i18n = useEditorI18n()
   const { handleRemoveHighlight } = useColorHighlight({ editor })
   const isMobile = useIsBreakpoint()
   const containerRef = useRef<HTMLDivElement>(null)
 
   const menuItems = useMemo(
-    () => [...colors, { label: "Remove highlight", value: "none" }],
-    [colors]
+    () => [...colors, { label: i18n.removeHighlight, value: "none" }],
+    [colors, i18n.removeHighlight]
   )
 
   const { selectedIndex } = useMenuNavigation({
@@ -160,8 +166,8 @@ export function ColorHighlightPopoverContent({
           <ButtonGroup>
             <Button
               onClick={handleRemoveHighlight}
-              aria-label="Remove highlight"
-              tooltip="Remove highlight"
+              aria-label={i18n.removeHighlight}
+              tooltip={i18n.removeHighlight}
               tabIndex={selectedIndex === colors.length ? 0 : -1}
               type="button"
               role="menuitem"
@@ -192,6 +198,7 @@ export function ColorHighlightPopover({
   ...props
 }: ColorHighlightPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isOpen, setIsOpen] = useState(false)
   const { isVisible, canColorHighlight, isActive, label, Icon } =
     useColorHighlight({
@@ -217,7 +224,7 @@ export function ColorHighlightPopover({
           <Icon className="tiptap-button-icon" />
         </ColorHighlightPopoverButton>
       </PopoverTrigger>
-      <PopoverContent aria-label="Highlight colors">
+      <PopoverContent aria-label={i18n.highlightColors}>
         <ColorHighlightPopoverContent
           editor={editor}
           colors={colors}

@@ -1,0 +1,56 @@
+@layer components {
+  .tiptap-table-context-menu {
+    position: fixed;
+    z-index: 60;
+    width: 11.5rem;
+    border: 1px solid var(--tt-gray-light-a-200);
+    border-radius: var(--tt-radius-md);
+    background: var(--white);
+    box-shadow: var(--tt-shadow-elevated-md);
+    color: var(--tt-gray-light-900);
+    padding: 0.25rem;
+  }
+
+  .dark .tiptap-table-context-menu {
+    border-color: var(--tt-gray-dark-a-200);
+    background: var(--tt-gray-dark-50);
+    color: var(--tt-gray-dark-900);
+  }
+
+  .tiptap-table-context-menu__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .tiptap-table-context-menu__separator {
+    height: 1px;
+    margin: 0.1875rem 0.25rem;
+    background: var(--tt-gray-light-a-200);
+  }
+
+  .dark .tiptap-table-context-menu__separator {
+    background: var(--tt-gray-dark-a-200);
+  }
+
+  .tiptap-table-context-menu__item {
+    width: 100%;
+    min-height: 1.5rem;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    border-radius: var(--tt-radius-md);
+    padding: 0.25rem 0.375rem;
+    font-size: 0.8125rem;
+    line-height: 1.15;
+  }
+
+  .tiptap-table-context-menu__item .tiptap-button-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+  }
+
+  .tiptap-table-context-menu__item .tiptap-button-text {
+    line-height: 1.125rem;
+  }
+}

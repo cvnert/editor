@@ -7,6 +7,7 @@ import type { Transaction } from "@tiptap/pm/state"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -224,6 +225,7 @@ export function useTableDeleteRowColumn(config: UseTableDeleteRowColumnConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(editor, index, orientation)
 
@@ -253,8 +255,10 @@ export function useTableDeleteRowColumn(config: UseTableDeleteRowColumnConfig) {
   }, [editor, index, orientation, tablePos, onDeleted])
 
   const label = useMemo(() => {
-    return tableDeleteRowColumnLabels[selectionType?.orientation || "row"]
-  }, [selectionType])
+    return selectionType?.orientation === "column"
+      ? i18n.deleteColumn
+      : i18n.deleteRow
+  }, [i18n.deleteColumn, i18n.deleteRow, selectionType])
 
   return {
     isVisible,

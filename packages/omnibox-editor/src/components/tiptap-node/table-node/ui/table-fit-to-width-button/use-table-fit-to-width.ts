@@ -3,6 +3,7 @@ import type { Editor } from "@tiptap/react"
 
 // --Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -213,6 +214,7 @@ export function useTableFitToWidth(config: UseTableFitToWidthConfig = {}) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const isVisible = shouldShowButton({
     editor,
@@ -227,7 +229,7 @@ export function useTableFitToWidth(config: UseTableFitToWidthConfig = {}) {
     return success
   }, [editor, onWidthAdjusted])
 
-  const label = "Fit to width"
+  const label = i18n.fitToWidth
   const Icon = MoveHorizontalIcon
 
   return {

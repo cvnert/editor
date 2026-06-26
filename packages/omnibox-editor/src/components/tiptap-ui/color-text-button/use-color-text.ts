@@ -249,7 +249,7 @@ export function useColorText(config: UseColorTextConfig) {
 
       const success = editor
         .chain()
-        .focus()
+        .focus(undefined, { scrollIntoView: false })
         .toggleMark("textStyle", { color: textColor })
         .run()
       if (success) {

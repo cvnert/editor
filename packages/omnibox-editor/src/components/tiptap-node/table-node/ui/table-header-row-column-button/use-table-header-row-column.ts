@@ -1,10 +1,11 @@
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import type { Editor } from "@tiptap/react"
 import { CellSelection, toggleHeader } from "@tiptap/pm/tables"
 import type { Transaction } from "@tiptap/pm/state"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import {
@@ -204,6 +205,7 @@ export function useTableHeaderRowColumn(config: UseTableHeaderRowColumnConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(editor, index, orientation)
 
@@ -247,7 +249,11 @@ export function useTableHeaderRowColumn(config: UseTableHeaderRowColumnConfig) {
     return success
   }, [editor, index, orientation, tablePos, onToggled])
 
-  const label = tableHeaderRowColumnLabels[selectionType?.orientation || "row"]
+  const label = useMemo(() => {
+    return selectionType?.orientation === "column"
+      ? i18n.headerColumn
+      : i18n.headerRow
+  }, [i18n.headerColumn, i18n.headerRow, selectionType])
   const Icon = tableHeaderRowColumnIcons[selectionType?.orientation || "row"]
 
   return {

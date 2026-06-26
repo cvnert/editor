@@ -10,6 +10,7 @@ import {
   isExtensionAvailable,
   isNodeTypeSelected,
 } from "@/lib/tiptap-utils"
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
 
 // --- Icons ---
 import { AlignCenterIcon } from "@/components/tiptap-icons/align-center-icon"
@@ -56,11 +57,18 @@ export const textAlignIcons = {
   justify: AlignJustifyIcon,
 }
 
-export const textAlignLabels: Record<TextAlign, string> = {
-  left: "Align left",
-  center: "Align center",
-  right: "Align right",
-  justify: "Align justify",
+export function getTextAlignLabel(
+  align: TextAlign,
+  i18n: OmniboxEditorI18n
+) {
+  return (
+    {
+      left: i18n.alignLeft,
+      center: i18n.alignCenter,
+      right: i18n.alignRight,
+      justify: i18n.alignJustify,
+    } satisfies Record<TextAlign, string>
+  )[align]
 }
 
 /**
@@ -187,6 +195,7 @@ export function useTextAlign(config: UseTextAlignConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canAlign = canSetTextAlign(editor, align)
   const isActive = isTextAlignActive(editor, align)
@@ -222,7 +231,7 @@ export function useTextAlign(config: UseTextAlignConfig) {
     isActive,
     handleTextAlign,
     canAlign,
-    label: textAlignLabels[align],
+    label: getTextAlignLabel(align, i18n),
     shortcutKeys: TEXT_ALIGN_SHORTCUT_KEYS[align],
     Icon: textAlignIcons[align],
   }

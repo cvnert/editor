@@ -16,6 +16,7 @@ import { TrashIcon } from "@/components/tiptap-icons/trash-icon"
 // --- Tiptap UI ---
 import type { UseLinkPopoverConfig } from "@/components/tiptap-ui/link-popover"
 import { useLinkPopover } from "@/components/tiptap-ui/link-popover"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/components/tiptap-ui-primitive/button"
@@ -81,6 +82,8 @@ export interface LinkPopoverProps
  */
 export const LinkButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, children, ...props }, ref) => {
+    const i18n = useEditorI18n()
+
     return (
       <Button
         type="button"
@@ -88,8 +91,8 @@ export const LinkButton = forwardRef<HTMLButtonElement, ButtonProps>(
         variant="ghost"
         role="button"
         tabIndex={-1}
-        aria-label="Link"
-        tooltip="Link"
+        aria-label={i18n.link}
+        tooltip={i18n.link}
         ref={ref}
         {...props}
       >
@@ -113,6 +116,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
   isActive,
 }) => {
   const isMobile = useIsBreakpoint()
+  const i18n = useEditorI18n()
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -135,7 +139,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
         <CardItemGroup orientation="horizontal">
           <Input
             type="url"
-            placeholder="Paste a link..."
+            placeholder={i18n.pasteLink}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -150,7 +154,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
             <Button
               type="button"
               onClick={setLink}
-              title="Apply link"
+              title={i18n.applyLink}
               disabled={!url && !isActive}
               variant="ghost"
             >
@@ -165,7 +169,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
               <Button
                 type="button"
                 onClick={openLink}
-                title="Open in new window"
+                title={i18n.openLinkInNewWindow}
                 disabled={!url && !isActive}
                 variant="ghost"
               >
@@ -177,7 +181,7 @@ const LinkMain: React.FC<LinkMainProps> = ({
               <Button
                 type="button"
                 onClick={removeLink}
-                title="Remove link"
+                title={i18n.removeLink}
                 disabled={!url && !isActive}
                 variant="ghost"
               >

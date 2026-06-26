@@ -6,6 +6,7 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Lib ---
 import { isMarkInSchema, isNodeTypeSelected } from "@/lib/tiptap-utils"
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
 
 // --- Icons ---
 import { BoldIcon } from "@/components/tiptap-icons/bold-icon"
@@ -124,11 +125,18 @@ export function shouldShowButton(props: {
   return true
 }
 
-/**
- * Gets the formatted mark name
- */
-export function getFormattedMarkName(type: Mark): string {
-  return type.charAt(0).toUpperCase() + type.slice(1)
+export function getMarkLabel(type: Mark, i18n: OmniboxEditorI18n): string {
+  return (
+    {
+      bold: i18n.bold,
+      italic: i18n.italic,
+      underline: i18n.underline,
+      strike: i18n.strike,
+      code: i18n.code,
+      superscript: i18n.superscript,
+      subscript: i18n.subscript,
+    } satisfies Record<Mark, string>
+  )[type]
 }
 
 /**
@@ -177,6 +185,7 @@ export function useMark(config: UseMarkConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canToggle = canToggleMark(editor, type)
   const isActive = isMarkActive(editor, type)
@@ -212,7 +221,7 @@ export function useMark(config: UseMarkConfig) {
     isActive,
     handleMark,
     canToggle,
-    label: getFormattedMarkName(type),
+    label: getMarkLabel(type, i18n),
     shortcutKeys: MARK_SHORTCUT_KEYS[type],
     Icon: markIcons[type],
   }

@@ -11,6 +11,7 @@ import type { Node } from "@tiptap/pm/model"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 import { cn, isValidPosition, SR_ONLY } from "@/lib/tiptap-utils"
 import type { Orientation } from "@/components/tiptap-node/table-node/lib/tiptap-table-utils"
 import { selectCellsByCoords } from "@/components/tiptap-node/table-node/lib/tiptap-table-utils"
@@ -80,11 +81,6 @@ const MENU_PLACEMENT_MAP: Record<
 > = {
   row: "top-start",
   column: "bottom-start",
-}
-
-const ARIA_LABELS: Record<Orientation, string> = {
-  row: "Row actions",
-  column: "Column actions",
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -698,8 +694,10 @@ const TableHandleMenuContent = ({
     menuPlacement,
     handleMenuToggle,
   } = useTableHandleMenu(onToggleOtherHandle, onOpenChange)
+  const i18n = useEditorI18n()
 
-  const ariaLabel = ARIA_LABELS[orientation]
+  const ariaLabel =
+    orientation === "row" ? i18n.rowActions : i18n.columnActions
 
   const handleDragStart = useCallback(
     (e: React.DragEvent) => {

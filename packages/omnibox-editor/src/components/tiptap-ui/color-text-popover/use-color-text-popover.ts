@@ -10,6 +10,7 @@ import { TextColorSmallIcon } from "@/components/tiptap-icons/text-color-small-i
 // --- Lib ---
 import { isMarkInSchema } from "@/lib/tiptap-utils"
 import { getActiveMarkAttrs } from "@/lib/tiptap-advanced-utils"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Tiptap UI ---
 import { canColorText } from "@/components/tiptap-ui/color-text-button"
@@ -228,6 +229,7 @@ export function useColorTextPopover(config?: UseColorTextPopoverConfig) {
   } = config || {}
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState(true)
 
   const textStyleInSchema = isMarkInSchema("textStyle", editor)
@@ -280,7 +282,7 @@ export function useColorTextPopover(config?: UseColorTextPopoverConfig) {
     activeTextStyle,
     activeHighlight,
     handleColorChanged,
-    label: "Text color",
+    label: i18n.textColor,
     Icon: TextColorSmallIcon,
   }
 }

@@ -6,6 +6,8 @@
   --tt-table-column-resize-handle-bg: var(--tt-brand-color-400);
   --tt-table-cell-padding: 0.25rem 0.5rem;
   --tt-table-margin-block: 1.25rem;
+  --tt-table-control-pad-block-start: 1rem;
+  --tt-table-control-pad-inline-start: 1rem;
 }
 
 .dark {
@@ -24,12 +26,14 @@
 
 .tiptap [data-content-type=table] .tableWrapper {
   box-sizing: border-box;
-  padding: 0;
+  padding-block-start: var(--tt-table-control-pad-block-start);
+  padding-inline-start: var(--tt-table-control-pad-inline-start);
+  margin-inline-start: calc(var(--tt-table-control-pad-inline-start) * -1);
   overflow-x: auto;
   overflow-y: hidden;
   position: relative;
-  max-width: 100%;
-  width: 100%;
+  max-width: calc(100% + var(--tt-table-control-pad-inline-start));
+  width: calc(100% + var(--tt-table-control-pad-inline-start));
   -webkit-overflow-scrolling: touch;
 }
 

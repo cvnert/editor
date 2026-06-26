@@ -17,6 +17,7 @@ import type { Node } from "@tiptap/pm/model"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -292,6 +293,7 @@ export function useTableAddRowColumn(config: UseTableAddRowColumnConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(editor, index, orientation)
 
@@ -326,8 +328,12 @@ export function useTableAddRowColumn(config: UseTableAddRowColumnConfig) {
 
   const label =
     selectionType?.orientation === "row"
-      ? tableAddRowColumnLabels.row[side as RowSide]
-      : tableAddRowColumnLabels.column[side as ColSide]
+      ? side === "above"
+        ? i18n.insertRowAbove
+        : i18n.insertRowBelow
+      : side === "left"
+        ? i18n.insertColumnLeft
+        : i18n.insertColumnRight
 
   const Icon =
     selectionType?.orientation === "row"

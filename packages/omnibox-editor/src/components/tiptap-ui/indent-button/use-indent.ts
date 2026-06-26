@@ -6,6 +6,7 @@ import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
+import { useEditorI18n, type OmniboxEditorI18n } from "@/lib/i18n"
 
 // --- Icons ---
 import { IndentIncreaseIcon } from "@/components/tiptap-icons/indent-increase-icon"
@@ -46,9 +47,16 @@ export const indentIcons = {
   outdent: IndentDecreaseIcon,
 }
 
-export const indentLabels: Record<IndentAction, string> = {
-  indent: "Increase indent",
-  outdent: "Decrease indent",
+export function getIndentLabel(
+  action: IndentAction,
+  i18n: OmniboxEditorI18n
+) {
+  return (
+    {
+      indent: i18n.increaseIndent,
+      outdent: i18n.decreaseIndent,
+    } satisfies Record<IndentAction, string>
+  )[action]
 }
 
 /**
@@ -154,6 +162,7 @@ export function useIndent(config: UseIndentConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const canIndent = canPerformIndent(editor, action)
 
@@ -191,7 +200,7 @@ export function useIndent(config: UseIndentConfig) {
     isVisible,
     canIndent,
     handleIndent,
-    label: indentLabels[action],
+    label: getIndentLabel(action, i18n),
     shortcutKeys: INDENT_SHORTCUT_KEYS[action],
     Icon: indentIcons[action],
   }

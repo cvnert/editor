@@ -1,4 +1,5 @@
 import type { Orientation } from "@/components/tiptap-node/table-node/lib/tiptap-table-utils"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- UI ---
 import { useTableAlignCell } from "@/components/tiptap-node/table-node/ui/table-align-cell-button"
@@ -36,6 +37,7 @@ export const TableAlignMenu = ({
   index?: number
   orientation?: Orientation
 }) => {
+  const i18n = useEditorI18n()
   const textAlign = {
     left: useTableAlignCell({
       alignmentType: "text",
@@ -82,6 +84,13 @@ export const TableAlignMenu = ({
     return null
   }
 
+  const textAlignLabels = [i18n.alignLeft, i18n.alignCenter, i18n.alignRight]
+  const verticalAlignLabels = [
+    i18n.alignTop,
+    i18n.alignMiddle,
+    i18n.alignBottom,
+  ]
+
   return (
     <Menu
       placement="right"
@@ -92,7 +101,7 @@ export const TableAlignMenu = ({
               render={
                 <Button variant="ghost">
                   <AlignmentIcon className="tiptap-button-icon" />
-                  <span className="tiptap-button-text">Alignment</span>
+                  <span className="tiptap-button-text">{i18n.alignment}</span>
                   <MenuButtonArrow render={<ChevronRightIcon />} />
                 </Button>
               }
@@ -108,7 +117,7 @@ export const TableAlignMenu = ({
               <ActionItem
                 key={`text-${i}`}
                 icon={align.Icon}
-                label={align.label}
+                label={textAlignLabels[i]}
                 disabled={!align.canAlignCell}
                 isActive={align.isActive}
                 onClick={align.handleAlign}
@@ -119,7 +128,7 @@ export const TableAlignMenu = ({
               <ActionItem
                 key={`vertical-${i}`}
                 icon={align.Icon}
-                label={align.label}
+                label={verticalAlignLabels[i]}
                 disabled={!align.canAlignCell}
                 isActive={align.isActive}
                 onClick={align.handleAlign}

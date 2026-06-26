@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/react"
+import { useMemo } from "react"
 
 // Primitive UI Components
 import { Button } from "@/components/tiptap-ui-primitive/button"
@@ -35,6 +36,8 @@ import { PaintBucketIcon } from "@/components/tiptap-icons/paint-bucket-icon"
 import { ChevronRightIcon } from "@/components/tiptap-icons/chevron-right-icon"
 import { TextColorSmallIcon } from "@/components/tiptap-icons/text-color-small-icon"
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
+import { localizeColorItems } from "./color-menu-utils"
 
 interface ColorMenuItemProps {
   editor?: Editor | null
@@ -102,8 +105,10 @@ const HighlightColorMenuItem: React.FC<ColorMenuItemProps> = ({
 const RecentColorMenuItem: React.FC<{
   editor?: Editor | null
   colorObj: RecentColor
-}> = ({ editor, colorObj }) => {
-  const colorSet = colorObj.type === "text" ? TEXT_COLORS : HIGHLIGHT_COLORS
+  textColors: typeof TEXT_COLORS
+  highlightColors: typeof HIGHLIGHT_COLORS
+}> = ({ editor, colorObj, textColors, highlightColors }) => {
+  const colorSet = colorObj.type === "text" ? textColors : highlightColors
   const color = getColorByValue(colorObj.value, colorSet)
 
   const ColorComponent =
@@ -137,11 +142,21 @@ export interface ColorMenuProps {
 export const ColorMenu: React.FC<ColorMenuProps> = ({
   editor: providedEditor,
   trigger,
-  label = "Color",
+  label,
   placement = "right",
 }) => {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const { recentColors, isInitialized } = useRecentColors()
+  const menuLabel = label ?? i18n.color
+  const textColors = useMemo(
+    () => localizeColorItems(TEXT_COLORS, "text", i18n),
+    [i18n]
+  )
+  const highlightColors = useMemo(
+    () => localizeColorItems(HIGHLIGHT_COLORS, "highlight", i18n),
+    [i18n]
+  )
 
   const hasColorActions: boolean =
     !!editor?.can().setMark("textStyle") ||
@@ -162,7 +177,7 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({
           render={
             <Button variant="ghost">
               <PaintBucketIcon className="tiptap-button-icon" />
-              <span className="tiptap-button-text">{label}</span>
+              <span className="tiptap-button-text">{menuLabel}</span>
               <Spacer />
               <ChevronRightIcon className="tiptap-button-icon" />
             </Button>
@@ -179,12 +194,14 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({
           {/* Recent Colors */}
           {isInitialized && recentColors.length > 0 && (
             <MenuGroup>
-              <MenuGroupLabel>Recent colors</MenuGroupLabel>
+              <MenuGroupLabel>{i18n.recentColors}</MenuGroupLabel>
               {recentColors.map((colorObj) => (
                 <RecentColorMenuItem
                   key={colorObj.value}
                   editor={editor}
                   colorObj={colorObj}
+                  textColors={textColors}
+                  highlightColors={highlightColors}
                 />
               ))}
               <Separator orientation="horizontal" />
@@ -193,8 +210,8 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({
 
           {/* Text Colors */}
           <MenuGroup>
-            <MenuGroupLabel>Text color</MenuGroupLabel>
-            {TEXT_COLORS.map((textColor) => (
+            <MenuGroupLabel>{i18n.textColor}</MenuGroupLabel>
+            {textColors.map((textColor) => (
               <TextColorMenuItem
                 key={textColor.value}
                 editor={editor}
@@ -207,8 +224,8 @@ export const ColorMenu: React.FC<ColorMenuProps> = ({
 
           {/* Background Colors */}
           <MenuGroup>
-            <MenuGroupLabel>Background color</MenuGroupLabel>
-            {HIGHLIGHT_COLORS.map((highlightColor) => (
+            <MenuGroupLabel>{i18n.backgroundColor}</MenuGroupLabel>
+            {highlightColors.map((highlightColor) => (
               <HighlightColorMenuItem
                 key={highlightColor.value}
                 editor={editor}

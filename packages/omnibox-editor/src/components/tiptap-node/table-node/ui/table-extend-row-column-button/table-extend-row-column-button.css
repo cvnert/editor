@@ -14,8 +14,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
+  background-color: var(--tt-table-handle-bg-color);
   border-radius: var(--tt-radius-lg);
+  pointer-events: auto;
+  transition:
+    background-color 120ms ease;
 }
 
 .tiptap-table-extend-row-column-button:hover,
@@ -29,8 +32,7 @@
   height: 1rem;
   flex-shrink: 0;
   color: var(--tt-table-extend-icon-color);
-  opacity: 0;
-  transition: opacity 150ms ease;
+  opacity: 1;
 }
 
 .tiptap-table-extend-row-column-button:hover .tiptap-button-icon,
@@ -41,13 +43,13 @@
 
 .tiptap-table-extend-row-column-button.tiptap-table-row-end-add-remove {
   width: 100%;
-  height: 1.5rem;
-  cursor: row-resize;
+  height: 0.75rem;
+  cursor: pointer;
 }
 
 .tiptap-table-extend-row-column-button.tiptap-table-column-end-add-remove {
-  width: 1.5rem;
-  cursor: col-resize;
+  width: 0.75rem;
+  cursor: pointer;
 }
 
 }

@@ -4,6 +4,7 @@ import { mergeCells, splitCell } from "@tiptap/pm/tables"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -254,6 +255,7 @@ export function useTableMergeSplitCell(config: UseTableMergeSplitCellConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const isVisible = shouldShowButton({
     editor,
@@ -280,7 +282,7 @@ export function useTableMergeSplitCell(config: UseTableMergeSplitCellConfig) {
     isVisible,
     canExecute: canPerformAction,
     handleExecute,
-    label: tableMergeSplitCellLabels[action],
+    label: action === "merge" ? i18n.mergeCells : i18n.splitCell,
     Icon: tableMergeSplitCellIcons[action],
   }
 }

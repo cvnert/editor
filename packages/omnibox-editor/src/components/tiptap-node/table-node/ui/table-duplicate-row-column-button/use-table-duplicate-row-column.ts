@@ -6,6 +6,7 @@ import { addColumnAfter, addRowAfter, CellSelection } from "@tiptap/pm/tables"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -118,7 +119,11 @@ function duplicateRow({
 
     let addSuccess = false
     if (editor.state.selection instanceof CellSelection) {
-      addSuccess = editor.chain().focus().addRowAfter().run()
+      addSuccess = editor
+        .chain()
+        .focus(undefined, { scrollIntoView: false })
+        .addRowAfter()
+        .run()
     } else {
       if (!tablePos) return false
       const sourceCoords = getIndexCoordinates({
@@ -203,7 +208,11 @@ function duplicateColumn({
 
     let addSuccess = false
     if (editor.state.selection instanceof CellSelection) {
-      addSuccess = editor.chain().focus().addColumnAfter().run()
+      addSuccess = editor
+        .chain()
+        .focus(undefined, { scrollIntoView: false })
+        .addColumnAfter()
+        .run()
     } else {
       if (!tablePos) return false
       const sourceCoords = getIndexCoordinates({
@@ -363,6 +372,7 @@ export function useTableDuplicateRowColumn(
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(editor, index, orientation)
 
@@ -392,8 +402,10 @@ export function useTableDuplicateRowColumn(
   }, [editor, index, orientation, tablePos, onDuplicated])
 
   const label = useMemo(() => {
-    return tableDuplicateRowColumnLabels[selectionType?.orientation || "row"]
-  }, [selectionType])
+    return selectionType?.orientation === "column"
+      ? i18n.duplicateColumn
+      : i18n.duplicateRow
+  }, [i18n.duplicateColumn, i18n.duplicateRow, selectionType])
 
   const Icon = CopyIcon
 

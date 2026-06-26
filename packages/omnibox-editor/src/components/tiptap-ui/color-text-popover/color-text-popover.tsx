@@ -49,6 +49,7 @@ import {
 
 // --- Utils ---
 import { chunkArray } from "@/lib/tiptap-advanced-utils"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Styles ---
 import "@/components/tiptap-ui/color-text-popover/color-text-popover.css"
@@ -206,11 +207,13 @@ function RecentColorsSection({
   editor,
   resolveColorValue,
 }: RecentColorsSectionProps) {
+  const i18n = useEditorI18n()
+
   if (recentColors.length === 0) return null
 
   return (
     <CardItemGroup>
-      <CardGroupLabel>Recently used</CardGroupLabel>
+      <CardGroupLabel>{i18n.recentColors}</CardGroupLabel>
       <ButtonGroup>
         {recentColors.map((colorObj, index) => (
           <ButtonGroup key={`recent-${colorObj.type}-${colorObj.value}`}>
@@ -246,6 +249,7 @@ export function TextStyleColorPanel({
   editor,
   resolveColorValue,
 }: TextStyleColorPanelProps) {
+  const i18n = useEditorI18n()
   const { recentColors, addRecentColor, isInitialized } =
     useRecentColors(maxRecentColors)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -284,7 +288,10 @@ export function TextStyleColorPanel({
         ...recentColors.map((color) => ({
           type: color.type,
           value: color.value,
-          label: `Recent ${color.type === "text" ? "text" : "highlight"} color`,
+          label:
+            color.type === "text"
+              ? i18n.recentTextColor
+              : i18n.recentHighlightColor,
           group: "recent",
         }))
       )
@@ -356,7 +363,7 @@ export function TextStyleColorPanel({
         )}
 
         <CardItemGroup>
-          <CardGroupLabel>Text color</CardGroupLabel>
+          <CardGroupLabel>{i18n.textColor}</CardGroupLabel>
           <ColorGroup
             type="text"
             colors={textColorGroups}
@@ -369,7 +376,7 @@ export function TextStyleColorPanel({
         </CardItemGroup>
 
         <CardItemGroup>
-          <CardGroupLabel>Highlight color</CardGroupLabel>
+          <CardGroupLabel>{i18n.highlightColor}</CardGroupLabel>
           <ColorGroup
             type="highlight"
             colors={highlightColorGroups}
@@ -410,6 +417,7 @@ export function ColorTextPopover({
   ...buttonProps
 }: ColorTextPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
   const [isOpen, setIsOpen] = useState(false)
   const {
     isVisible,
@@ -472,7 +480,7 @@ export function ColorTextPopover({
       </PopoverTrigger>
 
       <PopoverContent
-        aria-label="Text color options"
+        aria-label={i18n.textColorOptions}
         side="bottom"
         align="start"
         collisionPadding={4}

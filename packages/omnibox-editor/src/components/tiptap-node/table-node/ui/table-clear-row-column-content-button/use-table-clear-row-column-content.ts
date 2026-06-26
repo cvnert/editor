@@ -10,6 +10,7 @@ import {
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useEditorI18n } from "@/lib/i18n"
 
 // --- Lib ---
 import { isExtensionAvailable } from "@/lib/tiptap-utils"
@@ -416,6 +417,7 @@ export function useTableClearRowColumnContent(
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const i18n = useEditorI18n()
 
   const selectionType = getTableSelectionType(
     editor,
@@ -453,10 +455,17 @@ export function useTableClearRowColumnContent(
 
   const label = useMemo(() => {
     if (selectionType) {
-      return tableClearRowColumnContentLabels[selectionType.orientation]
+      return selectionType.orientation === "column"
+        ? i18n.clearColumnContents
+        : i18n.clearRowContents
     }
-    return "Clear contents"
-  }, [selectionType])
+    return i18n.clearContents
+  }, [
+    i18n.clearColumnContents,
+    i18n.clearContents,
+    i18n.clearRowContents,
+    selectionType,
+  ])
 
   const Icon = SquareXIcon
 
